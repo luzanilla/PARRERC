@@ -43,7 +43,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
     private List<ModeloExamen> modelosExamenes;    
     private Alumno alumno;
     private String variable_id;
-    private String variable_modelo;
+    private String variable_municipio;
+    private String variable_zona_escolar;
+    private String variable_escuela;
+    private String variable_turno;
+    private String variable_grupo;
     private int indiceSujeto = 0;
     private int indiceModelo = 0;
     private int indice_inicio_items = 0;
@@ -87,14 +91,30 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         listaVariables = new javax.swing.JList();
         boton_cambiar_id_sujeto = new javax.swing.JButton();
-        boton_cambiar_modelo_prueba = new javax.swing.JButton();
+        boton_cambiar_municipio = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         lista_variable_id_sujeto = new javax.swing.JList();
         jScrollPane3 = new javax.swing.JScrollPane();
-        lista_variable_modelo_prueba = new javax.swing.JList();
+        lista_variable_municipio = new javax.swing.JList();
         nombres_variables_primera_fila = new javax.swing.JCheckBox();
         clave_respuesta_segunda_fila = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
+        boton_cambiar_zona_escolar = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        lista_variable_zona_escolar = new javax.swing.JList();
+        jLabel5 = new javax.swing.JLabel();
+        boton_cambiar_escuela = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        lista_variable_escuela = new javax.swing.JList();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        lista_variable_turno = new javax.swing.JList();
+        boton_cambiar_turno = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        boton_cambiar_grupo = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        lista_variable_grupo = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cargar datos desde Excel");
@@ -124,7 +144,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             }
         });
 
-        jLabel4.setText("Modelo de prueba:");
+        jLabel4.setText("Municipio");
 
         listaVariables.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         listaVariables.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
@@ -142,13 +162,16 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             }
         });
 
-        boton_cambiar_modelo_prueba.setText(">");
-        boton_cambiar_modelo_prueba.setEnabled(false);
-        boton_cambiar_modelo_prueba.addActionListener(new java.awt.event.ActionListener() {
+        boton_cambiar_municipio.setText(">");
+        boton_cambiar_municipio.setEnabled(false);
+        boton_cambiar_municipio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                boton_cambiar_modelo_pruebaActionPerformed(evt);
+                boton_cambiar_municipioActionPerformed(evt);
             }
         });
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
         lista_variable_id_sujeto.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         lista_variable_id_sujeto.setAutoscrolls(false);
@@ -160,15 +183,18 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
         });
         jScrollPane2.setViewportView(lista_variable_id_sujeto);
 
-        lista_variable_modelo_prueba.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        lista_variable_modelo_prueba.setAutoscrolls(false);
-        lista_variable_modelo_prueba.setVisibleRowCount(1);
-        lista_variable_modelo_prueba.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lista_variable_municipio.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lista_variable_municipio.setAutoscrolls(false);
+        lista_variable_municipio.setVisibleRowCount(1);
+        lista_variable_municipio.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                lista_variable_modelo_pruebaValueChanged(evt);
+                lista_variable_municipioValueChanged(evt);
             }
         });
-        jScrollPane3.setViewportView(lista_variable_modelo_prueba);
+        jScrollPane3.setViewportView(lista_variable_municipio);
 
         nombres_variables_primera_fila.setSelected(true);
         nombres_variables_primera_fila.setText("Nombres de variables en la primer fila.");
@@ -179,6 +205,98 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
         clave_respuesta_segunda_fila.setEnabled(false);
 
         jLabel2.setText("Nombres de variables:");
+
+        boton_cambiar_zona_escolar.setText(">");
+        boton_cambiar_zona_escolar.setEnabled(false);
+        boton_cambiar_zona_escolar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_cambiar_zona_escolarActionPerformed(evt);
+            }
+        });
+
+        jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lista_variable_zona_escolar.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lista_variable_zona_escolar.setAutoscrolls(false);
+        lista_variable_zona_escolar.setVisibleRowCount(1);
+        lista_variable_zona_escolar.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lista_variable_zona_escolarValueChanged(evt);
+            }
+        });
+        jScrollPane4.setViewportView(lista_variable_zona_escolar);
+
+        jLabel5.setText("Zona escolar");
+
+        boton_cambiar_escuela.setText(">");
+        boton_cambiar_escuela.setEnabled(false);
+        boton_cambiar_escuela.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_cambiar_escuelaActionPerformed(evt);
+            }
+        });
+
+        jScrollPane5.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane5.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lista_variable_escuela.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lista_variable_escuela.setAutoscrolls(false);
+        lista_variable_escuela.setVisibleRowCount(1);
+        lista_variable_escuela.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lista_variable_escuelaValueChanged(evt);
+            }
+        });
+        jScrollPane5.setViewportView(lista_variable_escuela);
+
+        jLabel6.setText("Escuela");
+
+        jScrollPane6.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lista_variable_turno.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lista_variable_turno.setAutoscrolls(false);
+        lista_variable_turno.setVisibleRowCount(1);
+        lista_variable_turno.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lista_variable_turnoValueChanged(evt);
+            }
+        });
+        jScrollPane6.setViewportView(lista_variable_turno);
+
+        boton_cambiar_turno.setText(">");
+        boton_cambiar_turno.setEnabled(false);
+        boton_cambiar_turno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_cambiar_turnoActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Turno");
+
+        boton_cambiar_grupo.setText(">");
+        boton_cambiar_grupo.setEnabled(false);
+        boton_cambiar_grupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boton_cambiar_grupoActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Grupo");
+
+        jScrollPane7.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane7.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        lista_variable_grupo.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lista_variable_grupo.setAutoscrolls(false);
+        lista_variable_grupo.setVisibleRowCount(1);
+        lista_variable_grupo.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lista_variable_grupoValueChanged(evt);
+            }
+        });
+        jScrollPane7.setViewportView(lista_variable_grupo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -201,18 +319,33 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(boton_cambiar_modelo_prueba, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(boton_cambiar_id_sujeto, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(boton_cambiar_municipio, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(boton_cambiar_id_sujeto, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(boton_cambiar_zona_escolar, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(boton_cambiar_escuela, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(boton_cambiar_turno, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(boton_cambiar_grupo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(jLabel2)
                     .addComponent(nombres_variables_primera_fila)
                     .addComponent(clave_respuesta_segunda_fila))
-                .addGap(10, 10, 10))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,25 +356,48 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 .addComponent(nombres_variables_primera_fila)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(clave_respuesta_segunda_fila)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(boton_cambiar_id_sujeto))
-                        .addGap(33, 33, 33)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_id_sujeto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel4)
                         .addGap(4, 4, 4)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(boton_cambiar_modelo_prueba, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_municipio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jScrollPane3))
-                        .addGap(16, 16, 16)))
-                .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel5)
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_zona_escolar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel6)
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_escuela, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel7)
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_turno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel8)
+                        .addGap(4, 4, 4)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(boton_cambiar_grupo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane7)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boton_aceptar)
                     .addComponent(boton_cancelar))
@@ -259,7 +415,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
 
     private void listaVariablesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listaVariablesValueChanged
         this.lista_variable_id_sujeto.clearSelection();
-        this.lista_variable_modelo_prueba.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_turno.clearSelection();
+        this.lista_variable_grupo.clearSelection();
 
         if (this.listaVariables.getSelectedIndex() >= 0) {
             if (this.lista_variable_id_sujeto.getModel().getSize() == 0) {
@@ -269,15 +429,47 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 this.boton_cambiar_id_sujeto.setEnabled(false);
             }
 
-            if (this.lista_variable_modelo_prueba.getModel().getSize() == 0) {
-                this.boton_cambiar_modelo_prueba.setText(">");
-                this.boton_cambiar_modelo_prueba.setEnabled(true);
+            if (this.lista_variable_municipio.getModel().getSize() == 0) {
+                this.boton_cambiar_municipio.setText(">");
+                this.boton_cambiar_municipio.setEnabled(true);
             } else {
-                this.boton_cambiar_modelo_prueba.setEnabled(false);
+                this.boton_cambiar_municipio.setEnabled(false);
+            }
+            
+            if (this.lista_variable_zona_escolar.getModel().getSize() == 0) {
+                this.boton_cambiar_zona_escolar.setText(">");
+                this.boton_cambiar_zona_escolar.setEnabled(true);
+            } else {
+                this.boton_cambiar_zona_escolar.setEnabled(false);
+            }
+
+            if (this.lista_variable_escuela.getModel().getSize() == 0) {
+                this.boton_cambiar_escuela.setText(">");
+                this.boton_cambiar_escuela.setEnabled(true);
+            } else {
+                this.boton_cambiar_escuela.setEnabled(false);
+            }
+            
+            if (this.lista_variable_turno.getModel().getSize() == 0) {
+                this.boton_cambiar_turno.setText(">");
+                this.boton_cambiar_turno.setEnabled(true);
+            } else {
+                this.boton_cambiar_turno.setEnabled(false);
+            }
+
+            if (this.lista_variable_grupo.getModel().getSize() == 0) {
+                this.boton_cambiar_grupo.setText(">");
+                this.boton_cambiar_grupo.setEnabled(true);
+            } else {
+                this.boton_cambiar_grupo.setEnabled(false);
             }
         } else {
             this.boton_cambiar_id_sujeto.setEnabled(false);
-            this.boton_cambiar_modelo_prueba.setEnabled(false);
+            this.boton_cambiar_municipio.setEnabled(false);
+            this.boton_cambiar_zona_escolar.setEnabled(false);
+            this.boton_cambiar_escuela.setEnabled(false);
+            this.boton_cambiar_turno.setEnabled(false);
+            this.boton_cambiar_grupo.setEnabled(false);
         }
 
     }//GEN-LAST:event_listaVariablesValueChanged
@@ -291,12 +483,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             this.lista_variable_id_sujeto.setListData(temp.toArray());
 
             //Cambiamos el modelo de datos
-            indiceSujeto = this.listaVariables.getSelectedIndex();
             temp2.remove(this.listaVariables.getSelectedIndex());
             this.listaVariables.setListData(temp2.toArray());
         } else {
             if (this.boton_cambiar_id_sujeto.getText().equalsIgnoreCase("<")) {                
-                temp2.add(indiceSujeto, this.lista_variable_id_sujeto.getModel().getElementAt(this.lista_variable_id_sujeto.getSelectedIndex()).toString());
+                temp2.add(this.lista_variable_id_sujeto.getModel().getElementAt(this.lista_variable_id_sujeto.getSelectedIndex()).toString());
                 this.listaVariables.setListData(temp2.toArray());
 
                 this.lista_variable_id_sujeto.setListData(temp.toArray());
@@ -305,33 +496,53 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
 
     }//GEN-LAST:event_boton_cambiar_id_sujetoActionPerformed
 
-    private void boton_cambiar_modelo_pruebaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_modelo_pruebaActionPerformed
+    private void boton_cambiar_municipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_municipioActionPerformed
         temp = new ArrayList<>();
 
-        if (this.boton_cambiar_modelo_prueba.getText().equalsIgnoreCase(">")) {
+        if (this.boton_cambiar_municipio.getText().equalsIgnoreCase(">")) {
             //Agregamos la variable a 
             temp.add(this.listaVariables.getModel().getElementAt(this.listaVariables.getSelectedIndex()).toString());
-            this.lista_variable_modelo_prueba.setListData(temp.toArray());
+            this.lista_variable_municipio.setListData(temp.toArray());
 
             //Cambiamos el modelo de datos
-            indiceModelo = this.listaVariables.getSelectedIndex();
             this.temp2.remove(this.listaVariables.getSelectedIndex());
             this.listaVariables.setListData(this.temp2.toArray());
         } else {
-            if (this.boton_cambiar_modelo_prueba.getText().equalsIgnoreCase("<")) {
-                this.temp2.add(indiceModelo, this.lista_variable_modelo_prueba.getModel().getElementAt(this.lista_variable_modelo_prueba.getSelectedIndex()).toString());
+            if (this.boton_cambiar_municipio.getText().equalsIgnoreCase("<")) {
+                this.temp2.add(this.lista_variable_municipio.getModel().getElementAt(this.lista_variable_municipio.getSelectedIndex()).toString());
                 this.listaVariables.setListData(this.temp2.toArray());
 
-                this.lista_variable_modelo_prueba.setListData(temp.toArray());
+                this.lista_variable_municipio.setListData(temp.toArray());
             }
         }
 
-    }//GEN-LAST:event_boton_cambiar_modelo_pruebaActionPerformed
+    }//GEN-LAST:event_boton_cambiar_municipioActionPerformed
 
     private void boton_aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_aceptarActionPerformed
         try {
-            this.variable_id = this.lista_variable_id_sujeto.getModel().getElementAt(0).toString();                
-            this.variable_modelo = this.lista_variable_modelo_prueba.getModel().getElementAt(0).toString();                
+            if(this.lista_variable_id_sujeto.getModel().getSize()>0) {
+                this.variable_id = this.lista_variable_id_sujeto.getModel().getElementAt(0).toString();
+            }
+            
+            if(this.lista_variable_municipio.getModel().getSize()>0) {
+                this.variable_municipio = this.lista_variable_municipio.getModel().getElementAt(0).toString();
+            }
+            
+            if(this.lista_variable_zona_escolar.getModel().getSize()>0) {
+                this.variable_zona_escolar = this.lista_variable_zona_escolar.getModel().getElementAt(0).toString();
+            }
+            
+            if(this.lista_variable_escuela.getModel().getSize()>0) {
+                this.variable_escuela = this.lista_variable_escuela.getModel().getElementAt(0).toString();
+            }
+            
+            if(this.lista_variable_turno.getModel().getSize()>0) {
+                this.variable_turno = this.lista_variable_turno.getModel().getElementAt(0).toString();
+            }
+            
+            if(this.lista_variable_grupo.getModel().getSize()>0) {
+                this.variable_grupo = this.lista_variable_grupo.getModel().getElementAt(0).toString();
+            }            
 
             leeClaveRespuestas();
             calculaNumeroItems();
@@ -345,6 +556,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             for(int j=0; j<this.modelosExamenes.size(); j++) { 
                 
                 this.modelosExamenes.get(j).setVarIdSujeto(this.variable_id);
+                this.modelosExamenes.get(j).setVarMunicipio(this.variable_id);
+                this.modelosExamenes.get(j).setVarZonaEscolar(this.variable_id);
+                this.modelosExamenes.get(j).setVarEscuela(this.variable_id);
+                this.modelosExamenes.get(j).setVarTurno(this.variable_id);
+                this.modelosExamenes.get(j).setVarGrupo(this.variable_id);
                 this.modelosExamenes.get(j).setVars_contexto(this.modelosExamenes.get(j).getVariables().subList(0, (this.modelosExamenes.get(j).getIndice_inicio_items()-1)));
                 this.modelosExamenes.get(j).setVars_items( this.modelosExamenes.get(j).getVariables().subList(this.modelosExamenes.get(j).getIndice_inicio_items(), this.modelosExamenes.get(j).getIndice_fin_items()) );
                 
@@ -375,7 +591,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
     private void lista_variable_id_sujetoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_id_sujetoValueChanged
         //Quitamos los elementos seleccionados de los otros list
         this.listaVariables.clearSelection();
-        this.lista_variable_modelo_prueba.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_turno.clearSelection();
+        this.lista_variable_grupo.clearSelection();
 
         if (this.lista_variable_id_sujeto.getSelectedIndex() >= 0) {
             //Cambiamos el sentido del botón y lo habilitamos
@@ -387,19 +607,179 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
 
     }//GEN-LAST:event_lista_variable_id_sujetoValueChanged
 
-    private void lista_variable_modelo_pruebaValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_modelo_pruebaValueChanged
+    private void lista_variable_municipioValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_municipioValueChanged
         //Quitamos los elementos seleccionados de los otros list
         this.listaVariables.clearSelection();
         this.lista_variable_id_sujeto.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_turno.clearSelection();
+        this.lista_variable_grupo.clearSelection();
 
-        if (this.lista_variable_modelo_prueba.getSelectedIndex() >= 0) {
+        if (this.lista_variable_municipio.getSelectedIndex() >= 0) {
             //Cambiamos el sentido del botón y lo habilitamos
-            this.boton_cambiar_modelo_prueba.setText("<");
-            this.boton_cambiar_modelo_prueba.setEnabled(true);
+            this.boton_cambiar_municipio.setText("<");
+            this.boton_cambiar_municipio.setEnabled(true);
         } else {
-            this.boton_cambiar_modelo_prueba.setEnabled(false);
+            this.boton_cambiar_municipio.setEnabled(false);
         }
-    }//GEN-LAST:event_lista_variable_modelo_pruebaValueChanged
+    }//GEN-LAST:event_lista_variable_municipioValueChanged
+
+    private void boton_cambiar_zona_escolarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_zona_escolarActionPerformed
+        temp = new ArrayList<>();
+
+        if (this.boton_cambiar_zona_escolar.getText().equalsIgnoreCase(">")) {
+            //Agregamos la variable a 
+            temp.add(this.listaVariables.getModel().getElementAt(this.listaVariables.getSelectedIndex()).toString());
+            this.lista_variable_zona_escolar.setListData(temp.toArray());
+
+            //Cambiamos el modelo de datos
+            this.temp2.remove(this.listaVariables.getSelectedIndex());
+            this.listaVariables.setListData(this.temp2.toArray());
+        } else {
+            if (this.boton_cambiar_zona_escolar.getText().equalsIgnoreCase("<")) {
+                this.temp2.add(this.lista_variable_zona_escolar.getModel().getElementAt(this.lista_variable_zona_escolar.getSelectedIndex()).toString());
+                this.listaVariables.setListData(this.temp2.toArray());
+
+                this.lista_variable_zona_escolar.setListData(temp.toArray());
+            }
+        }
+    }//GEN-LAST:event_boton_cambiar_zona_escolarActionPerformed
+
+    private void lista_variable_zona_escolarValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_zona_escolarValueChanged
+        //Quitamos los elementos seleccionados de los otros list
+        this.listaVariables.clearSelection();
+        this.lista_variable_id_sujeto.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_turno.clearSelection();
+        this.lista_variable_grupo.clearSelection();
+
+        if (this.lista_variable_zona_escolar.getSelectedIndex() >= 0) {
+            //Cambiamos el sentido del botón y lo habilitamos
+            this.boton_cambiar_zona_escolar.setText("<");
+            this.boton_cambiar_zona_escolar.setEnabled(true);
+        } else {
+            this.boton_cambiar_zona_escolar.setEnabled(false);
+        }
+    }//GEN-LAST:event_lista_variable_zona_escolarValueChanged
+
+    private void boton_cambiar_escuelaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_escuelaActionPerformed
+        temp = new ArrayList<>();
+
+        if (this.boton_cambiar_escuela.getText().equalsIgnoreCase(">")) {
+            //Agregamos la variable a 
+            temp.add(this.listaVariables.getModel().getElementAt(this.listaVariables.getSelectedIndex()).toString());
+            this.lista_variable_escuela.setListData(temp.toArray());
+
+            //Cambiamos el modelo de datos
+            this.temp2.remove(this.listaVariables.getSelectedIndex());
+            this.listaVariables.setListData(this.temp2.toArray());
+        } else {
+            if (this.boton_cambiar_escuela.getText().equalsIgnoreCase("<")) {
+                this.temp2.add(this.lista_variable_escuela.getModel().getElementAt(this.lista_variable_escuela.getSelectedIndex()).toString());
+                this.listaVariables.setListData(this.temp2.toArray());
+
+                this.lista_variable_escuela.setListData(temp.toArray());
+            }
+        }
+    }//GEN-LAST:event_boton_cambiar_escuelaActionPerformed
+
+    private void lista_variable_escuelaValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_escuelaValueChanged
+        //Quitamos los elementos seleccionados de los otros list
+        this.listaVariables.clearSelection();
+        this.lista_variable_id_sujeto.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_turno.clearSelection();
+        this.lista_variable_grupo.clearSelection();
+
+        if (this.lista_variable_escuela.getSelectedIndex() >= 0) {
+            //Cambiamos el sentido del botón y lo habilitamos
+            this.boton_cambiar_escuela.setText("<");
+            this.boton_cambiar_escuela.setEnabled(true);
+        } else {
+            this.boton_cambiar_escuela.setEnabled(false);
+        }
+    }//GEN-LAST:event_lista_variable_escuelaValueChanged
+
+    private void lista_variable_turnoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_turnoValueChanged
+        //Quitamos los elementos seleccionados de los otros list
+        this.listaVariables.clearSelection();
+        this.lista_variable_id_sujeto.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_grupo.clearSelection();
+
+        if (this.lista_variable_turno.getSelectedIndex() >= 0) {
+            //Cambiamos el sentido del botón y lo habilitamos
+            this.boton_cambiar_turno.setText("<");
+            this.boton_cambiar_turno.setEnabled(true);
+        } else {
+            this.boton_cambiar_turno.setEnabled(false);
+        }
+    }//GEN-LAST:event_lista_variable_turnoValueChanged
+
+    private void boton_cambiar_turnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_turnoActionPerformed
+        temp = new ArrayList<>();
+
+        if (this.boton_cambiar_turno.getText().equalsIgnoreCase(">")) {
+            //Agregamos la variable a 
+            temp.add(this.listaVariables.getModel().getElementAt(this.listaVariables.getSelectedIndex()).toString());
+            this.lista_variable_turno.setListData(temp.toArray());
+
+            //Cambiamos el modelo de datos
+            this.temp2.remove(this.listaVariables.getSelectedIndex());
+            this.listaVariables.setListData(this.temp2.toArray());
+        } else {
+            if (this.boton_cambiar_turno.getText().equalsIgnoreCase("<")) {
+                this.temp2.add(this.lista_variable_turno.getModel().getElementAt(this.lista_variable_turno.getSelectedIndex()).toString());
+                this.listaVariables.setListData(this.temp2.toArray());
+
+                this.lista_variable_turno.setListData(temp.toArray());
+            }
+        }
+    }//GEN-LAST:event_boton_cambiar_turnoActionPerformed
+
+    private void boton_cambiar_grupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_cambiar_grupoActionPerformed
+        temp = new ArrayList<>();
+
+        if (this.boton_cambiar_grupo.getText().equalsIgnoreCase(">")) {
+            //Agregamos la variable a 
+            temp.add(this.listaVariables.getModel().getElementAt(this.listaVariables.getSelectedIndex()).toString());
+            this.lista_variable_grupo.setListData(temp.toArray());
+
+            //Cambiamos el modelo de datos
+            this.temp2.remove(this.listaVariables.getSelectedIndex());
+            this.listaVariables.setListData(this.temp2.toArray());
+        } else {
+            if (this.boton_cambiar_grupo.getText().equalsIgnoreCase("<")) {
+                this.temp2.add(this.lista_variable_grupo.getModel().getElementAt(this.lista_variable_grupo.getSelectedIndex()).toString());
+                this.listaVariables.setListData(this.temp2.toArray());
+
+                this.lista_variable_grupo.setListData(temp.toArray());
+            }
+        }
+    }//GEN-LAST:event_boton_cambiar_grupoActionPerformed
+
+    private void lista_variable_grupoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_grupoValueChanged
+        //Quitamos los elementos seleccionados de los otros list
+        this.listaVariables.clearSelection();
+        this.lista_variable_id_sujeto.clearSelection();
+        this.lista_variable_municipio.clearSelection();
+        this.lista_variable_zona_escolar.clearSelection();
+        this.lista_variable_escuela.clearSelection();
+        this.lista_variable_turno.clearSelection();
+
+        if (this.lista_variable_grupo.getSelectedIndex() >= 0) {
+            //Cambiamos el sentido del botón y lo habilitamos
+            this.boton_cambiar_grupo.setText("<");
+            this.boton_cambiar_grupo.setEnabled(true);
+        } else {
+            this.boton_cambiar_grupo.setEnabled(false);
+        }
+    }//GEN-LAST:event_lista_variable_grupoValueChanged
 
     /**
      * @param args the command line arguments
@@ -439,20 +819,36 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boton_aceptar;
+    private javax.swing.JButton boton_cambiar_escuela;
+    private javax.swing.JButton boton_cambiar_grupo;
     private javax.swing.JButton boton_cambiar_id_sujeto;
-    private javax.swing.JButton boton_cambiar_modelo_prueba;
+    private javax.swing.JButton boton_cambiar_municipio;
+    private javax.swing.JButton boton_cambiar_turno;
+    private javax.swing.JButton boton_cambiar_zona_escolar;
     private javax.swing.JButton boton_cancelar;
     private javax.swing.JCheckBox clave_respuesta_segunda_fila;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JList listaVariables;
+    private javax.swing.JList lista_variable_escuela;
+    private javax.swing.JList lista_variable_grupo;
     private javax.swing.JList lista_variable_id_sujeto;
-    private javax.swing.JList lista_variable_modelo_prueba;
+    private javax.swing.JList lista_variable_municipio;
+    private javax.swing.JList lista_variable_turno;
+    private javax.swing.JList lista_variable_zona_escolar;
     private javax.swing.JCheckBox nombres_variables_primera_fila;
     // End of variables declaration//GEN-END:variables
 

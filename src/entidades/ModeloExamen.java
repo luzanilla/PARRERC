@@ -22,6 +22,11 @@ public class ModeloExamen {
     private List<String> opcionesRespuesta;
     private String nombreModelo;
     private String varIdSujeto;
+    private String varMunicipio;
+    private String varZonaEscolar;
+    private String varEscuela;
+    private String varTurno;
+    private String varGrupo;
     private int indice_inicio_items;
     private int indice_fin_items;
     private int rango_minimo = 0;
@@ -279,7 +284,51 @@ public class ModeloExamen {
         return this.varIdSujeto;
     }
     
+    public String getVarMunicipio() {
+        return varMunicipio;
+    }
+
+    public void setVarMunicipio(String varMunicipio) {
+        this.varMunicipio = varMunicipio;
+    }
+
+    public String getVarZonaEscolar() {
+        return varZonaEscolar;
+    }
+
+    public void setVarZonaEscolar(String varZonaEscolar) {
+        this.varZonaEscolar = varZonaEscolar;
+    }
+
+    public String getVarEscuela() {
+        return varEscuela;
+    }
+
+    public void setVarEscuela(String varEscuela) {
+        this.varEscuela = varEscuela;
+    }
+
+    public String getVarTurno() {
+        return varTurno;
+    }
+
+    public void setVarTurno(String varTurno) {
+        this.varTurno = varTurno;
+    }
+
+    public String getVarGrupo() {
+        return varGrupo;
+    }
+
+    public void setVarGrupo(String varGrupo) {
+        this.varGrupo = varGrupo;
+    }
+    
     public int getIndiceVarIdSujeto() {
         return this.variables.indexOf(this.varIdSujeto);
+    }
+    
+    public int getIndiceVar(String var) {
+        return this.variables.indexOf(var);
     }
 }
