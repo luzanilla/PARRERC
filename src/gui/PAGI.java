@@ -53,9 +53,7 @@ public class PAGI extends javax.swing.JInternalFrame {
         Dimension jInternalFrameSize = this.getSize();
 
         this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
-        this.setVisible(true);
-        
-        System.out.println("HOLA");
+        this.setVisible(true);                
     }
 
     /**
