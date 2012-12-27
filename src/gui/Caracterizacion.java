@@ -5,10 +5,27 @@
 package gui;
 
 import entidades.ModeloExamen;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -55,7 +72,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         boton_cambiar_id_sujeto = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         lista_variable_id_sujeto = new javax.swing.JList();
-        nombres_variables_primera_fila = new javax.swing.JCheckBox();
+        mostrar_graficas = new javax.swing.JCheckBox();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         boton_aceptar = new javax.swing.JButton();
@@ -101,7 +118,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         });
         jScrollPane2.setViewportView(lista_variable_id_sujeto);
 
-        nombres_variables_primera_fila.setText("Mostrar gráficos");
+        mostrar_graficas.setText("Mostrar gráficos");
 
         jLabel2.setText("Variables de contexto:");
 
@@ -144,7 +161,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(jDialog1Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(nombres_variables_primera_fila)
+                .addComponent(mostrar_graficas)
                 .addContainerGap())
             .addGroup(jDialog1Layout.createSequentialGroup()
                 .addContainerGap()
@@ -173,7 +190,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                         .addGap(63, 63, 63)
                         .addComponent(boton_cambiar_id_sujeto)))
                 .addGap(18, 18, 18)
-                .addComponent(nombres_variables_primera_fila)
+                .addComponent(mostrar_graficas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -199,17 +216,15 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 446, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 342, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
         );
 
         pack();
@@ -237,6 +252,11 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             this.modelosExamenes.get(i).setCaract_variables_seleccionadas(variables_seleccionadas);
             this.modelosExamenes.get(i).setCaract_opciones_respuesta(opciones_respuesta);
             this.modelosExamenes.get(i).setCaract_frecuencias_distractores(frecuencias_distractores);
+            
+            if(this.mostrar_graficas.isSelected()) {
+                crearGraficas(i);
+            }            
+            
         }                
         
         this.jDialog1.dispose();
@@ -308,7 +328,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList listaVariables;
     private javax.swing.JList lista_variable_id_sujeto;
-    private javax.swing.JCheckBox nombres_variables_primera_fila;
+    private javax.swing.JCheckBox mostrar_graficas;
     private javax.swing.JEditorPane panel_resultados;
     // End of variables declaration//GEN-END:variables
 
@@ -348,6 +368,161 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                         
         }
                 
+    }
+    
+    private void crearGraficas(int indice_modelo_examen) {
+        boolean auto = false;
+        
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas().length; i++) {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            
+            for(int j=0; j<this.modelosExamenes.get(indice_modelo_examen).getCaract_opciones_respuesta()[i].size(); j++) {
+                dataset.setValue(this.modelosExamenes.get(indice_modelo_examen).getCaract_frecuencias_distractores()[i].get(j), "Frecuencias", this.modelosExamenes.get(indice_modelo_examen).getCaract_opciones_respuesta()[i].get(j));           
+            }
+            
+            JFreeChart chart = ChartFactory.createBarChart(this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas()[i], "", "Frecuencia", dataset, PlotOrientation.VERTICAL, true, true, true);
+            
+            chart.setBackgroundPaint(Color.white);
+
+            /*final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+            plot.setBackgroundPaint(new Color(240, 240, 240));
+            plot.setRangeGridlinePaint(Color.darkGray);
+            plot.setRangeGridlinesVisible(true);
+            plot.setDomainGridlinePaint(Color.darkGray);
+            plot.setDomainGridlinesVisible(true);
+
+            // customise the range axis...
+            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+            //rangeAxis.setTickUnit(new NumberTickUnit(0.5), true,true);
+            rangeAxis.setAutoRangeIncludesZero(false);
+
+            if(auto) {
+                rangeAxis.setLowerBound(0);
+                rangeAxis.setUpperBound(100);
+            }
+
+            final CategoryAxis domainAxis = plot.getDomainAxis();   
+            domainAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
+            domainAxis.setMaximumCategoryLabelLines(2);
+            domainAxis.setLowerMargin(0.0);
+            domainAxis.setUpperMargin(0.0);
+            domainAxis.setFixedDimension(1.0);
+            domainAxis.setCategoryMargin(1.0);        
+            
+            // customise the renderer...
+            final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();        
+            //renderer.setDrawShapes(true);
+            renderer.setSeriesStroke(
+                    0, new BasicStroke(
+                    3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    1.0f, new float[]{8.0f, 6.0f}, 0.0f));
+            renderer.setSeriesStroke(
+                    1, new BasicStroke(
+                    3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    1.0f, new float[]{4.0f, 6.0f}, 0.0f));
+            renderer.setSeriesStroke(
+                    2, new BasicStroke(
+                    3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    1.0f, new float[]{0.0f, 6.0f}, 0.0f));
+            renderer.setSeriesStroke(
+                    3, new BasicStroke(
+                    3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    1.0f, new float[]{10.0f, 6.0f}, 0.0f));
+
+            renderer.setSeriesPaint(2, new Color(139, 186, 0));
+            renderer.setSeriesPaint(3, new Color(246, 189, 15));
+
+            renderer.setSeriesShapesVisible(0, true);
+            renderer.setSeriesShapesVisible(1, true);
+            renderer.setSeriesShapesVisible(2, true);
+            renderer.setSeriesShapesVisible(3, true);        
+
+            plot.setRenderer(renderer);
+            */
+            ChartFrame frame1=new ChartFrame("Bar Chart", chart);
+            frame1.setVisible(true);
+            frame1.setSize(400,350);
+        }
+    }
+   
+    //Pendiente
+    private void guardarImagenes() {
+        File dir = new File("temp");                
+        
+        if(dir.exists()) {
+            borrarDirectorio(dir);                                   
+        }
+        
+        this.jDialog1.setLocationRelativeTo(null);
+        this.jDialog1.setVisible(true);
+        
+        
+        if (dir.mkdirs()) {
+            for(int i=0; i<this.modelosExamenes.size(); i++) {
+                
+                /*this.jLabel1.setText("Modelo " + (i+1) + " de " + this.modelosExamenes.size() + ":");
+                Rectangle progressLabel = this.jProgressBar1.getBounds();
+                progressLabel.x = 0;
+                progressLabel.y = 0;
+                this.jLabel1.paintImmediately(progressLabel);
+                
+                this.jProgressBar1.setMinimum(0);
+                this.jProgressBar1.setMaximum(this.modelosExamenes.get(i).getGraficasFrec().size());
+                */
+                File dirModelo = new File("temp\\caract\\" + this.modelosExamenes.get(i).getNombreModelo());                                                               
+                
+                if (dirModelo.mkdirs()) {
+                    
+                    for(int j=0; j<this.modelosExamenes.get(i).getGraficasFrec().size(); j++) {                                                 
+                        
+                        try {
+                            ChartUtilities.saveChartAsPNG(
+                                    new java.io.File("temp\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + (this.modelosExamenes.get(i).getGraficasFrec().get(j).getTitle().getText()) + ".PNG"),
+                                    this.modelosExamenes.get(i).getGraficasFrec().get(j),
+                                    500,
+                                    300);                                                        
+                            
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                        
+                        /*this.jProgressBar1.setValue(j);
+                        System.out.println(j);
+                        Rectangle progressRect = this.jProgressBar1.getBounds();
+                        progressRect.x = 0;
+                        progressRect.y = 0;
+                        this.jProgressBar1.paintImmediately(progressRect);*/
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al crear el directorio del modelo.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al crear el directorio temporal para imagenes.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        this.jDialog1.setVisible(false);        
+    }
+
+    //Pendiente
+    private void borrarDirectorio(File directorio) {
+        File[] ficheros = directorio.listFiles();
+ 
+        for (int x=0;x<ficheros.length;x++) {
+            
+            if (ficheros[x].isDirectory()) {
+                borrarDirectorio(ficheros[x]);
+            }
+            
+            ficheros[x].delete();
+        }
+        
+        directorio.delete();
     }
 
     private void pintar_resultados() {
@@ -398,4 +573,5 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         
         this.panel_resultados.setText(out); 
     }
+
 }
