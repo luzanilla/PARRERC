@@ -50,6 +50,35 @@ public class ModeloExamen {
     private double[] respuestas_calificadas_item;
     private double[] totalAciertos;
     
+    //Variables del análisis de Caracterización de examinados
+    private String[] caract_variables_seleccionadas;        
+    private List<String>[] caract_opciones_respuesta;
+    private List<Integer>[] caract_frecuencias_distractores;
+    
+    public String[] getCaract_variables_seleccionadas() {
+        return caract_variables_seleccionadas;
+    }
+
+    public void setCaract_variables_seleccionadas(String[] caract_variables_seleccionadas) {
+        this.caract_variables_seleccionadas = caract_variables_seleccionadas;
+    }
+
+    public List<String>[] getCaract_opciones_respuesta() {
+        return caract_opciones_respuesta;
+    }
+
+    public void setCaract_opciones_respuesta(List<String>[] caract_opciones_respuesta) {
+        this.caract_opciones_respuesta = caract_opciones_respuesta;
+    }
+
+    public List<Integer>[] getCaract_frecuencias_distractores() {
+        return caract_frecuencias_distractores;
+    }
+
+    public void setCaract_frecuencias_distractores(List<Integer>[] caract_frecuencias_distractores) {
+        this.caract_frecuencias_distractores = caract_frecuencias_distractores;
+    }    
+    
     public double[] getTotalAciertosItem(int indice) {        
         int totalAciertosItem = 0;
         

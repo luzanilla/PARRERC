@@ -5,6 +5,7 @@
 package gui;
 
 import entidades.ModeloExamen;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
@@ -17,7 +18,9 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     private List<ModeloExamen> modelosExamenes;
     private List<String> temp;
     private List<String> temp2;
-    private String[] variables_seleccionadas;
+    private String[] variables_seleccionadas;  
+    private List<String>[] opciones_respuesta;
+    private List<Integer>[] frecuencias_distractores;
             
     /**
      * Creates new form Caracterizacion
@@ -57,8 +60,8 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         boton_aceptar = new javax.swing.JButton();
         boton_cancelar = new javax.swing.JButton();
-        panel_resultados = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        jScollPane3 = new javax.swing.JScrollPane();
+        panel_resultados = new javax.swing.JEditorPane();
 
         jDialog1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         jDialog1.setTitle("Cargar datos desde Excel");
@@ -189,7 +192,8 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
 
-        panel_resultados.setViewportView(jEditorPane1);
+        panel_resultados.setContentType("text/html");
+        jScollPane3.setViewportView(panel_resultados);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -197,14 +201,14 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panel_resultados)
+                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panel_resultados, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -216,45 +220,30 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_boton_cancelarActionPerformed
 
     private void boton_aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boton_aceptarActionPerformed
-        
+        this.variables_seleccionadas = new String[this.lista_variable_id_sujeto.getModel().getSize()];
         
         for(int i=0; i<this.lista_variable_id_sujeto.getModel().getSize(); i++) {
-            
+            this.variables_seleccionadas[i] = this.lista_variable_id_sujeto.getModel().getElementAt(i).toString();
         }
         
-        /*try {
-            this.variable_id = this.lista_variable_id_sujeto.getModel().getElementAt(0).toString();
-            this.variable_modelo = this.lista_variable_modelo_prueba.getModel().getElementAt(0).toString();            
-
-            this.dispose();
-
-            for(int j=0; j<this.modelosExamenes.size(); j++) {
-
-                this.modelosExamenes.get(j).setVars_contexto(this.modelosExamenes.get(j).getVariables().subList(0, (this.modelosExamenes.get(j).getIndice_inicio_items()-1)));
-                this.modelosExamenes.get(j).setVars_items( this.modelosExamenes.get(j).getVariables().subList(this.modelosExamenes.get(j).getIndice_inicio_items(), this.modelosExamenes.get(j).getIndice_fin_items()) );
-
-                System.out.println("Opciones de respuesta: " + this.modelosExamenes.get(j).getNombreModelo());
-
-                for (int i = 0; i < this.modelosExamenes.get(j).getOpcionesRespuesta().size(); i++) {
-                    System.out.print(this.modelosExamenes.get(j).getOpcionesRespuesta().get(i) + ", ");
-                }
-
-                System.out.println("");
-
-                System.out.println("Alumnos Ordenada: " + this.modelosExamenes.get(j).getNombreModelo());
-
-                for (int i = 0; i < this.modelosExamenes.get(j).getAlumnosOrdenada().size(); i++) {
-                    System.out.print(this.modelosExamenes.get(j).getAlumnosOrdenada().get(i).getAciertos() + ", ");
-                }
-
-                System.out.println("");
+        for(int i=0; i<this.modelosExamenes.size(); i++) {            
+            opciones_respuesta = new ArrayList[this.variables_seleccionadas.length];
+            frecuencias_distractores = new ArrayList[this.variables_seleccionadas.length];
+            
+            for(int j=0; j<this.modelosExamenes.get(i).getNumero_de_examinados(); j++) {
+                calcularFrecuencias(j, i);
             }
-
-            JOptionPane.showMessageDialog(this, "Base de datos cargada.", "Mensaje", JOptionPane.INFORMATION_MESSAGE);
-            this.inp.close();
-        } catch (IOException ex) {
-            Logger.getLogger(CargarDatosExcel.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+            
+            this.modelosExamenes.get(i).setCaract_variables_seleccionadas(variables_seleccionadas);
+            this.modelosExamenes.get(i).setCaract_opciones_respuesta(opciones_respuesta);
+            this.modelosExamenes.get(i).setCaract_frecuencias_distractores(frecuencias_distractores);
+        }                
+        
+        this.jDialog1.dispose();
+        
+        pintar_resultados();
+        
+        this.setVisible(true);
     }//GEN-LAST:event_boton_aceptarActionPerformed
 
     private void lista_variable_id_sujetoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_id_sujetoValueChanged
@@ -310,16 +299,103 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     private javax.swing.JButton boton_cambiar_id_sujeto;
     private javax.swing.JButton boton_cancelar;
     private javax.swing.JDialog jDialog1;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScollPane3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList listaVariables;
     private javax.swing.JList lista_variable_id_sujeto;
     private javax.swing.JCheckBox nombres_variables_primera_fila;
-    private javax.swing.JScrollPane panel_resultados;
+    private javax.swing.JEditorPane panel_resultados;
     // End of variables declaration//GEN-END:variables
+
+    private void calcularFrecuencias(int indice_examinado, int indice_modelo_examen) {
+        int indiceVar;
+        String respuesta;
+        
+        for(int i=0; i<this.variables_seleccionadas.length; i++) {
+            if(opciones_respuesta[i]==null) {
+                List<String> opciones_temp = new ArrayList();
+                opciones_respuesta[i] = opciones_temp;
+            }
+            
+            if(frecuencias_distractores[i]==null) {
+                List<Integer> frecuencias_temp = new ArrayList();
+                frecuencias_distractores[i] = frecuencias_temp;
+            }
+            
+            indiceVar = this.modelosExamenes.get(indice_modelo_examen).getIndiceVar(this.variables_seleccionadas[i]);
+            
+            respuesta = this.modelosExamenes.get(indice_modelo_examen).getAlumnosOrdenada().get(indice_examinado).getRespuesta(indiceVar);
+            
+            if( !opciones_respuesta[i].contains(respuesta) ) {
+                opciones_respuesta[i].add(respuesta);
+                frecuencias_distractores[i].add(new Integer(1));
+            } else {
+                int indice_respuesta = opciones_respuesta[i].indexOf(respuesta);
+                
+                if(indice_respuesta!=-1) {
+                    int cont = frecuencias_distractores[i].get(indice_respuesta).intValue();
+                    cont++;
+                    frecuencias_distractores[i].set(indice_respuesta, new Integer(cont));
+                } else {
+                    System.out.println("Algo raro esta pasando");
+                }
+            }
+                        
+        }
+                
+    }
+
+    private void pintar_resultados() {
+        String out = "";
+        DecimalFormat df = new DecimalFormat("0.000");
+        
+        for(int k=0; k<this.modelosExamenes.size(); k++) {            
+        
+            out = out +
+                    "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<caption style=\"font-weight:bold;\"> " + this.modelosExamenes.get(k).getNombreModelo() + "</caption>"
+                    + "<tr>"
+                        +  "<td style=\"text-align:center; font-weight:bold;\">Variable</td>";
+            
+            out = out + "<td style=\"text-align:center; font-weight:bold;\">Opci&oacute;n de respuesta</td>";
+            out = out + "<td style=\"text-align:center; font-weight:bold;\">Frecuencia</td>";
+            //out = out + "<td colspan=\"2\" style=\"text-align:center; font-weight:bold;\">Porcentaje</td>";
+            out = out + "</tr>";                                  
+
+            for(int i=0; i<this.modelosExamenes.get(k).getCaract_variables_seleccionadas().length; i++) {
+                out = out + "<tr>";
+
+                out = out + "<td style=\"text-align:center;\"";                
+                out = out + " rowspan=\"" + this.modelosExamenes.get(k).getCaract_opciones_respuesta()[i].size() + "\">" + this.modelosExamenes.get(k).getCaract_variables_seleccionadas()[i] + "</td>";
+                
+                for(int j=0; j<this.modelosExamenes.get(k).getCaract_opciones_respuesta()[i].size(); j++) {
+                    /*double por;
+                    por = this.modelosExamenes.get(k).getFrecuencias_distractores()[i][j];
+                    por = (por/this.modelosExamenes.get(k).getAlumnosOrdenada().size())*100;                    
+                    */
+                    
+                    if(j!=0) {
+                        out = out + "<tr>";
+                    }
+                    
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(k).getCaract_opciones_respuesta()[i].get(j) + " </td>";
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(k).getCaract_frecuencias_distractores()[i].get(j).intValue() + "</td>";
+                    out = out + "</tr>";                                        
+                }
+                
+                               
+                
+            }        
+
+            out = out + "</table>";
+            out = out + "<br /><br />";
+        }        
+        
+        this.panel_resultados.setText(out); 
+    }
 }
