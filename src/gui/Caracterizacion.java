@@ -38,6 +38,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     private String[] variables_seleccionadas;  
     private List<String>[] opciones_respuesta;
     private List<Integer>[] frecuencias_distractores;
+    private List<JFreeChart> caract_graficas;
             
     /**
      * Creates new form Caracterizacion
@@ -261,6 +262,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         
         this.jDialog1.dispose();
         
+        guardarImagenes();
         pintar_resultados();
         
         this.setVisible(true);
@@ -372,6 +374,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     
     private void crearGraficas(int indice_modelo_examen) {
         boolean auto = false;
+        caract_graficas = new ArrayList<>();
         
         for(int i=0; i<this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas().length; i++) {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -380,7 +383,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                 dataset.setValue(this.modelosExamenes.get(indice_modelo_examen).getCaract_frecuencias_distractores()[i].get(j), "Frecuencias", this.modelosExamenes.get(indice_modelo_examen).getCaract_opciones_respuesta()[i].get(j));           
             }
             
-            JFreeChart chart = ChartFactory.createBarChart(this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas()[i], "", "Frecuencia", dataset, PlotOrientation.VERTICAL, true, true, true);
+            JFreeChart chart = ChartFactory.createBarChart(this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas()[i], "Opciones de respuesta", "Frecuencia", dataset, PlotOrientation.VERTICAL, false, false, false);
             
             chart.setBackgroundPaint(Color.white);
 
@@ -441,13 +444,15 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
 
             plot.setRenderer(renderer);
             */
-            ChartFrame frame1=new ChartFrame("Bar Chart", chart);
+            /*ChartFrame frame1=new ChartFrame("Bar Chart", chart);
             frame1.setVisible(true);
-            frame1.setSize(400,350);
+            frame1.setSize(400,350);*/
+            caract_graficas.add(chart);
         }
+        
+        this.modelosExamenes.get(indice_modelo_examen).setCaract_graficas(caract_graficas);
     }
    
-    //Pendiente
     private void guardarImagenes() {
         File dir = new File("temp");                
         
@@ -455,8 +460,8 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             borrarDirectorio(dir);                                   
         }
         
-        this.jDialog1.setLocationRelativeTo(null);
-        this.jDialog1.setVisible(true);
+        //this.jDialog1.setLocationRelativeTo(null);
+        //this.jDialog1.setVisible(true);
         
         
         if (dir.mkdirs()) {
@@ -475,14 +480,14 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                 
                 if (dirModelo.mkdirs()) {
                     
-                    for(int j=0; j<this.modelosExamenes.get(i).getGraficasFrec().size(); j++) {                                                 
+                    for(int j=0; j<this.modelosExamenes.get(i).getCaract_graficas().size(); j++) {                                                 
                         
                         try {
                             ChartUtilities.saveChartAsPNG(
-                                    new java.io.File("temp\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + (this.modelosExamenes.get(i).getGraficasFrec().get(j).getTitle().getText()) + ".PNG"),
-                                    this.modelosExamenes.get(i).getGraficasFrec().get(j),
-                                    500,
-                                    300);                                                        
+                                    new java.io.File("temp\\caract\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + (this.modelosExamenes.get(i).getCaract_graficas().get(j).getTitle().getText()) + ".PNG"),
+                                    this.modelosExamenes.get(i).getCaract_graficas().get(j),
+                                    400,
+                                    260);                                                        
                             
                         } catch (java.io.IOException exc) {
                             JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
@@ -569,7 +574,46 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
 
             out = out + "</table>";
             out = out + "<br /><br />";
-        }        
+            
+        }
+        
+        for(int k=0; k<this.modelosExamenes.size(); k++) {            
+                        
+            out = out +
+                    "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<caption style=\"text-align:center; font-weight:bold;\"> " + this.modelosExamenes.get(k).getNombreModelo() + "</caption>";
+            
+            for(int i=0; i<this.modelosExamenes.get(k).getCaract_graficas().size(); i++) {                                
+                out = out + "<tr>"
+                        +  "<td style=\"text-align:center; border:0;\">&nbsp;</td>";            
+
+                out = out + "</tr>";            
+                
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                String nombreArchivo = "\"file:temp/caract/" + this.modelosExamenes.get(k).getNombreModelo() + "/" + (this.modelosExamenes.get(k).getCaract_graficas().get(i).getTitle().getText()) + ".PNG\"";                                
+                
+                out = out + "<img src=" + nombreArchivo + " width=\"400\" height=\"260\" border=\"0\">";
+                out = out + "</td>";
+                out = out + "</tr>";            
+                
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                out = out + "&nbsp;";
+                out = out + "</td>";
+                out = out + "</tr>";  
+                
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                out = out + "&nbsp;";
+                out = out + "</td>";
+                out = out + "</tr>"; 
+            }        
+
+            out = out + "</table>";
+            out = out + "<br /> <br />";
+        }
         
         this.panel_resultados.setText(out); 
     }

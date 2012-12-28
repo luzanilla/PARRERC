@@ -34,7 +34,7 @@ public class ModeloExamen {
     private int numero_de_items = 0;
     private int numero_de_examinados = 0;
     
-    //Variables del anaálisis psicométrico
+    //Variables del análisis psicométrico
     double[] dificultad_reactivos;
     double[] discriminacion_reactivos;
     int[][] frecuencias_distractores;
@@ -54,6 +54,15 @@ public class ModeloExamen {
     private String[] caract_variables_seleccionadas;        
     private List<String>[] caract_opciones_respuesta;
     private List<Integer>[] caract_frecuencias_distractores;
+    private List<JFreeChart> caract_graficas;
+
+    public List<JFreeChart> getCaract_graficas() {
+        return caract_graficas;
+    }
+
+    public void setCaract_graficas(List<JFreeChart> caract_graficas) {
+        this.caract_graficas = caract_graficas;
+    }
     
     public String[] getCaract_variables_seleccionadas() {
         return caract_variables_seleccionadas;
