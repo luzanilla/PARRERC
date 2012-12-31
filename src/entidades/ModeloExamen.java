@@ -55,6 +55,17 @@ public class ModeloExamen {
     private List<String>[] caract_opciones_respuesta;
     private List<Integer>[] caract_frecuencias_distractores;
     private List<JFreeChart> caract_graficas;
+    
+    //Variables de análisis por unidad de aprendizaje
+    private List<UnidadAprendizaje> unidades_aprendizaje;
+
+    public List<UnidadAprendizaje> getUnidades_aprendizaje() {
+        return unidades_aprendizaje;
+    }
+
+    public void setUnidades_aprendizaje(List<UnidadAprendizaje> unidades_aprendizaje) {
+        this.unidades_aprendizaje = unidades_aprendizaje;
+    }
 
     public List<JFreeChart> getCaract_graficas() {
         return caract_graficas;

@@ -22,10 +22,16 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -383,18 +389,22 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
                 dataset.setValue(this.modelosExamenes.get(indice_modelo_examen).getCaract_frecuencias_distractores()[i].get(j), "Frecuencias", this.modelosExamenes.get(indice_modelo_examen).getCaract_opciones_respuesta()[i].get(j));           
             }
             
-            JFreeChart chart = ChartFactory.createBarChart(this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas()[i], "Opciones de respuesta", "Frecuencia", dataset, PlotOrientation.VERTICAL, false, false, false);
+            JFreeChart chart = ChartFactory.createBarChart(this.modelosExamenes.get(indice_modelo_examen).getCaract_variables_seleccionadas()[i], "Opciones de respuesta", "Frecuencia", dataset, PlotOrientation.VERTICAL, false, true, true);
             
             chart.setBackgroundPaint(Color.white);
 
-            /*final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+            final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 
             plot.setBackgroundPaint(new Color(240, 240, 240));
             plot.setRangeGridlinePaint(Color.darkGray);
             plot.setRangeGridlinesVisible(true);
             plot.setDomainGridlinePaint(Color.darkGray);
-            plot.setDomainGridlinesVisible(true);
+            //plot.setDomainGridlinesVisible(true);
+            
+            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setUpperBound((this.modelosExamenes.get(indice_modelo_examen).getNumero_de_examinados()+10));
 
+            /*
             // customise the range axis...
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
             rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -414,14 +424,21 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             domainAxis.setFixedDimension(1.0);
             domainAxis.setCategoryMargin(1.0);        
             
+            */
             // customise the renderer...
-            final LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();        
+            final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
             //renderer.setDrawShapes(true);
-            renderer.setSeriesStroke(
-                    0, new BasicStroke(
-                    3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-                    1.0f, new float[]{8.0f, 6.0f}, 0.0f));
-            renderer.setSeriesStroke(
+            renderer.setSeriesPaint(0, new Color(79, 129, 189));
+            renderer.setMaximumBarWidth(.2);
+            
+            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(0, true);
+            
+            //renderer.setBaseItemLabelsVisible(true);
+            //renderer.setSeriesItemLabelsVisible(0, true, true);
+            //renderer.setPositiveItemLabelPositionFallback(new ItemLabelPosition(ItemLabelAnchor.CENTER, TextAnchor.CENTER));
+            
+            /*renderer.setSeriesStroke(
                     1, new BasicStroke(
                     3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
                     1.0f, new float[]{4.0f, 6.0f}, 0.0f));
@@ -441,9 +458,12 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             renderer.setSeriesShapesVisible(1, true);
             renderer.setSeriesShapesVisible(2, true);
             renderer.setSeriesShapesVisible(3, true);        
-
+*/
+            renderer.setSeriesVisible(0, true);
+            
+ 
             plot.setRenderer(renderer);
-            */
+  
             /*ChartFrame frame1=new ChartFrame("Bar Chart", chart);
             frame1.setVisible(true);
             frame1.setSize(400,350);*/
@@ -454,7 +474,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     }
    
     private void guardarImagenes() {
-        File dir = new File("temp");                
+        File dir = new File("temp\\caract");                
         
         if(dir.exists()) {
             borrarDirectorio(dir);                                   

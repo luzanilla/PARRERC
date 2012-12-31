@@ -17,6 +17,7 @@ public class Parrerc extends javax.swing.JFrame {
     private PAGI pagi;
     private AnalisisVersionesPrueba versiones;
     private Caracterizacion caracterizar;
+    private ResultadosPorUnidadAprendizaje resPorUnidad;
 
     /**
      * Creates new form Parrerc
@@ -159,6 +160,11 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.add(miResultadosGenerales);
 
         miResultadosPorUnidadAprendizaje.setText("Resultados por unidad de aprendizaje");
+        miResultadosPorUnidadAprendizaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miResultadosPorUnidadAprendizajeActionPerformed(evt);
+            }
+        });
         menuAnalisisResultados.add(miResultadosPorUnidadAprendizaje);
 
         miResultadosGeneralesVC.setText("Resultados generales contra variables de contexto");
@@ -266,6 +272,12 @@ public class Parrerc extends javax.swing.JFrame {
         this.jDesktopPane1.add(caracterizar);
         this.jDesktopPane1.setSelectedFrame(caracterizar);           
     }//GEN-LAST:event_miCaracExaminadosActionPerformed
+
+    private void miResultadosPorUnidadAprendizajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosPorUnidadAprendizajeActionPerformed
+        resPorUnidad = new ResultadosPorUnidadAprendizaje(cd.getModelosExamenes(), this.jDesktopPane1);
+        this.jDesktopPane1.add(resPorUnidad);
+        this.jDesktopPane1.setSelectedFrame(resPorUnidad);
+    }//GEN-LAST:event_miResultadosPorUnidadAprendizajeActionPerformed
 
     /**
      * @param args the command line arguments
