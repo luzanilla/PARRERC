@@ -5,9 +5,7 @@
 package gui;
 
 import entidades.ModeloExamen;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Rectangle;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -15,23 +13,14 @@ import java.util.List;
 import javax.swing.JDesktopPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.ItemLabelAnchor;
-import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
-import org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.TextAnchor;
 
 /**
  *

@@ -5,11 +5,13 @@
 package gui;
 
 import entidades.ModeloExamen;
+import entidades.ZonaEscolar;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -19,11 +21,14 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
 
     private List<ModeloExamen> modelosExamenes;
     private DefineVariablesAnalisis dv;
+    //Por municipio
     private List<String> opciones_respuesta_municipio;
     private List<Integer> frecuencias_op_res_municipio;
     private List<Double> puntaje_total_municipio;
     private List<Double> puntaje_promedio_municipio;
-    private List<Double> porcentaje_aciertos_municipio;
+    private List<Double> porcentaje_aciertos_municipio;   
+    //Por municipio y zona escolar
+    private List<ZonaEscolar>[] zona_escolar_por_municipio;    
     
     /**
      * Creates new form ResultadosGenerales
@@ -88,7 +93,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         for(int i=0; i<this.modelosExamenes.size(); i++) {
             
             if(this.modelosExamenes.get(i).isPor_municipio()) {
-                calcularPorMunicipio(i);
+                calcularPorMunicipio(i);                
             }
             
             if(this.modelosExamenes.get(i).isPor_zona_escolar()) {
@@ -114,6 +119,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         puntaje_promedio_municipio = new ArrayList<>();
         porcentaje_aciertos_municipio = new ArrayList<>();
         
+        //Calculamos la frecuencia de cada municipio y su puntaje total para despues calcular el puntaje promedio por municipio y porcentaje de aciertos
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {            
             String respuesta;               
             double aciertos;
@@ -141,6 +147,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             
         }
         
+        //Calculamos el puntaje promedio por municipio y porcentaje de aciertos
         for(int i=0; i<opciones_respuesta_municipio.size(); i++) {
             double promedio = (puntaje_total_municipio.get(i).doubleValue()/frecuencias_op_res_municipio.get(i).intValue());
             puntaje_promedio_municipio.add(promedio);            
@@ -155,7 +162,69 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
     }
 
     private void calcularPorZonaEscolar(int indice_modelo) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        //Si eligió la opción por municipio calculamos las zonas escolares por municipio
+        if(this.modelosExamenes.get(indice_modelo).isPor_municipio()) {
+            zona_escolar_por_municipio = new ArrayList[this.opciones_respuesta_municipio.size()];
+            int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+            int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
+            
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {                
+                String municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_municipio);
+                String zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_zona_escolar);
+                double aciertos = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getAciertos();
+                
+                int indice_opcion_municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().indexOf(municipio);
+                
+                List<ZonaEscolar> zonas_temp;
+                if(zona_escolar_por_municipio[indice_opcion_municipio]==null) {                    
+                    zonas_temp = new ArrayList();
+                } else {
+                    zonas_temp = zona_escolar_por_municipio[indice_opcion_municipio];
+                }
+                
+                boolean flag = false;
+                int j=0;
+                
+                for(j=0; j<zonas_temp.size(); j++) {
+                    if(zonas_temp.get(j).getNombre_zona_escolar().equalsIgnoreCase(zona_escolar)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                
+                ZonaEscolar zona;
+                if(flag) {
+                    zona = zonas_temp.get(j);
+                } else {
+                    zona = new ZonaEscolar(zona_escolar, municipio);
+                }                                              
+                
+                zona.setFrecuencia_zona_escolar( (zona.getFrecuencia_zona_escolar()+1) );
+                zona.setPuntaje_total_zona_escolar( (zona.getPuntaje_total_zona_escolar()+aciertos) );
+                
+                if(flag) {
+                    zonas_temp.set(j, zona);
+                } else {
+                    zonas_temp.add(zona);
+                }
+                
+                zona_escolar_por_municipio[indice_opcion_municipio] = zonas_temp;
+                this.modelosExamenes.get(indice_modelo).setZona_escolar_por_municipio(zona_escolar_por_municipio);
+            }
+            
+        }
+        
+        //Pintar resultados
+        for(int i=0; i<zona_escolar_por_municipio.length; i++) {
+            for(int j=0; j<zona_escolar_por_municipio[i].size(); j++) {                
+                
+                double puntaje_promedio = zona_escolar_por_municipio[i].get(j).getPuntaje_total_zona_escolar()/zona_escolar_por_municipio[i].get(j).getFrecuencia_zona_escolar();
+                double porcentaje = (puntaje_promedio/this.modelosExamenes.get(indice_modelo).getNumero_de_items())*100;
+                
+                System.out.println(this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i) + ": " + zona_escolar_por_municipio[i].get(j).getNombre_zona_escolar() + " : " + zona_escolar_por_municipio[i].get(j).getFrecuencia_zona_escolar() + " : " + zona_escolar_por_municipio[i].get(j).getPuntaje_total_zona_escolar() + " : Puntaje promedio=" + puntaje_promedio + " : Porcentaje=" + porcentaje);
+                
+            }
+        }
     }
 
     private void calcularPorEscuela(int indice_modelo) {
@@ -168,38 +237,41 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
     
     private void pintar_resultados() {
         String out = "";
-        DecimalFormat df = new DecimalFormat("0.000");
+        DecimalFormat df = new DecimalFormat("0.000");                
         
         for(int k=0; k<this.modelosExamenes.size(); k++) {            
         
-            out = out +
+            if(this.modelosExamenes.get(k).isPor_municipio()) {
+                out = out +
                     "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                     + "<caption style=\"font-weight:bold;\"> " + this.modelosExamenes.get(k).getNombreModelo() + "</caption>"
                     + "<tr>";
-            
-            out = out + "<td style=\"text-align:center; font-weight:bold;\">Municipio</td>";
-            out = out + "<td style=\"text-align:center; font-weight:bold;\">Total</td>";
-            out = out + "<td style=\"text-align:center; font-weight:bold;\">Porcentaje</td>";
-            out = out + "</tr>";                                  
-            
-            out = out + "<tr>";            
-            
-            for(int j=0; j<this.modelosExamenes.get(k).getOpciones_respuesta_municipio().size(); j++) {                                             
 
-                if(j!=0) {
-                    out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\">Municipio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\">Total</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\">Porcentaje</td>";
+                out = out + "</tr>";                                  
+
+                out = out + "<tr>";            
+
+                for(int j=0; j<this.modelosExamenes.get(k).getOpciones_respuesta_municipio().size(); j++) {                                             
+
+                    if(j!=0) {
+                        out = out + "<tr>";
+                    }
+
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(k).getOpciones_respuesta_municipio().get(j) + " </td>";
+                    out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(k).getPuntaje_promedio_municipio().get(j).doubleValue()) + "</td>";
+                    out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(k).getPorcentaje_aciertos_municipio().get(j).doubleValue()*100) + "%</td>";
+                    out = out + "</tr>";                                        
                 }
+
+
+                out = out + "</table>";
+                out = out + "<br /><br />";
                 
-                out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(k).getOpciones_respuesta_municipio().get(j) + " </td>";
-                out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(k).getPuntaje_promedio_municipio().get(j).doubleValue()) + "</td>";
-                out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(k).getPorcentaje_aciertos_municipio().get(j).doubleValue()*100) + "%</td>";
-                out = out + "</tr>";                                        
             }
                         
-
-            out = out + "</table>";
-            out = out + "<br /><br />";
-            
         }
         
         /*for(int k=0; k<this.modelosExamenes.size(); k++) {            

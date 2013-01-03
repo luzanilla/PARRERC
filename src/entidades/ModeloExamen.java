@@ -68,9 +68,20 @@ public class ModeloExamen {
     private boolean despliega_anova;
 
     //Variables de resultados generales
+    //por municipio
     private List<String> opciones_respuesta_municipio;
     private List<Double> puntaje_promedio_municipio;
     private List<Double> porcentaje_aciertos_municipio;
+    //por zona escolar y municipio
+    private List<ZonaEscolar>[] zona_escolar_por_municipio;
+
+    public List<ZonaEscolar>[] getZona_escolar_por_municipio() {
+        return zona_escolar_por_municipio;
+    }
+
+    public void setZona_escolar_por_municipio(List<ZonaEscolar>[] zona_escolar_por_municipio) {
+        this.zona_escolar_por_municipio = zona_escolar_por_municipio;
+    }
 
     public List<Double> getPorcentaje_aciertos_municipio() {
         return porcentaje_aciertos_municipio;
