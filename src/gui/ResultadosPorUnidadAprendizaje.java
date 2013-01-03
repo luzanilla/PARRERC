@@ -17,6 +17,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
 
     private List<ModeloExamen> modelosExamenes;
     private ConstructorUnidadDeAprendizaje define_unidades;
+    private DefineVariablesAnalisis dv;
     
     /**
      * Creates new form ResultadosPorUnidadAprendizaje
@@ -28,6 +29,10 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         if(this.modelosExamenes.get(0).getUnidades_aprendizaje()==null) {
             define_unidades = new ConstructorUnidadDeAprendizaje(this.modelosExamenes, jDesktopPane1);
         }
+        
+        dv = new DefineVariablesAnalisis(this.modelosExamenes, jDesktopPane1);
+        
+        realizarAnalisis();
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -55,13 +60,14 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         setTitle("Resultados por Unidad de Aprendizaje");
 
         jEditorPane1.setEditable(false);
+        jEditorPane1.setContentType("text/html");
         jScrollPane1.setViewportView(jEditorPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -74,4 +80,8 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
     private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    private void realizarAnalisis() {
+        
+    }
 }

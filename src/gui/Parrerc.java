@@ -18,6 +18,7 @@ public class Parrerc extends javax.swing.JFrame {
     private AnalisisVersionesPrueba versiones;
     private Caracterizacion caracterizar;
     private ResultadosPorUnidadAprendizaje resPorUnidad;
+    private ResultadosGenerales resGenerales;
 
     /**
      * Creates new form Parrerc
@@ -157,6 +158,11 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.add(miCaracExaminados);
 
         miResultadosGenerales.setText("Resultados generales");
+        miResultadosGenerales.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miResultadosGeneralesActionPerformed(evt);
+            }
+        });
         menuAnalisisResultados.add(miResultadosGenerales);
 
         miResultadosPorUnidadAprendizaje.setText("Resultados por unidad de aprendizaje");
@@ -278,6 +284,12 @@ public class Parrerc extends javax.swing.JFrame {
         this.jDesktopPane1.add(resPorUnidad);
         this.jDesktopPane1.setSelectedFrame(resPorUnidad);
     }//GEN-LAST:event_miResultadosPorUnidadAprendizajeActionPerformed
+
+    private void miResultadosGeneralesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosGeneralesActionPerformed
+        resGenerales = new ResultadosGenerales(cd.getModelosExamenes(), this.jDesktopPane1);
+        this.jDesktopPane1.add(resGenerales);
+        this.jDesktopPane1.setSelectedFrame(resGenerales);
+    }//GEN-LAST:event_miResultadosGeneralesActionPerformed
 
     /**
      * @param args the command line arguments

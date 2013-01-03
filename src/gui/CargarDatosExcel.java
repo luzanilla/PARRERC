@@ -556,11 +556,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             for(int j=0; j<this.modelosExamenes.size(); j++) { 
                 
                 this.modelosExamenes.get(j).setVarIdSujeto(this.variable_id);
-                this.modelosExamenes.get(j).setVarMunicipio(this.variable_id);
-                this.modelosExamenes.get(j).setVarZonaEscolar(this.variable_id);
-                this.modelosExamenes.get(j).setVarEscuela(this.variable_id);
-                this.modelosExamenes.get(j).setVarTurno(this.variable_id);
-                this.modelosExamenes.get(j).setVarGrupo(this.variable_id);
+                this.modelosExamenes.get(j).setVarMunicipio(this.variable_municipio);
+                this.modelosExamenes.get(j).setVarZonaEscolar(this.variable_zona_escolar);
+                this.modelosExamenes.get(j).setVarEscuela(this.variable_escuela);
+                this.modelosExamenes.get(j).setVarTurno(this.variable_turno);
+                this.modelosExamenes.get(j).setVarGrupo(this.variable_grupo);
                 this.modelosExamenes.get(j).setVars_contexto(this.modelosExamenes.get(j).getVariables().subList(0, (this.modelosExamenes.get(j).getIndice_inicio_items()-1)));
                 this.modelosExamenes.get(j).setVars_items( this.modelosExamenes.get(j).getVariables().subList(this.modelosExamenes.get(j).getIndice_inicio_items(), this.modelosExamenes.get(j).getIndice_fin_items()) );
                 

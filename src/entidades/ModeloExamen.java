@@ -56,9 +56,95 @@ public class ModeloExamen {
     private List<Integer>[] caract_frecuencias_distractores;
     private List<JFreeChart> caract_graficas;
     
-    //Variables de análisis por unidad de aprendizaje
+    //Variables de constructor de unidad de aprendizaje
     private List<UnidadAprendizaje> unidades_aprendizaje;
+    
+    //Variables de define variables para el análisis
+    private boolean por_municipio;
+    private boolean por_zona_escolar;
+    private boolean por_escuela;
+    private boolean por_grupo;
+    private boolean despliega_graficas;
+    private boolean despliega_anova;
 
+    //Variables de resultados generales
+    private List<String> opciones_respuesta_municipio;
+    private List<Double> puntaje_promedio_municipio;
+    private List<Double> porcentaje_aciertos_municipio;
+
+    public List<Double> getPorcentaje_aciertos_municipio() {
+        return porcentaje_aciertos_municipio;
+    }
+
+    public void setPorcentaje_aciertos_municipio(List<Double> porcentaje_aciertos_municipio) {
+        this.porcentaje_aciertos_municipio = porcentaje_aciertos_municipio;
+    }
+
+    public List<Double> getPuntaje_promedio_municipio() {
+        return puntaje_promedio_municipio;
+    }
+
+    public void setPuntaje_promedio_municipio(List<Double> puntaje_promedio_municipio) {
+        this.puntaje_promedio_municipio = puntaje_promedio_municipio;
+    }
+
+    public List<String> getOpciones_respuesta_municipio() {
+        return opciones_respuesta_municipio;
+    }
+
+    public void setOpciones_respuesta_municipio(List<String> opciones_respuesta_municipio) {
+        this.opciones_respuesta_municipio = opciones_respuesta_municipio;
+    }            
+    
+    public boolean isPor_municipio() {
+        return por_municipio;
+    }
+
+    public void setPor_municipio(boolean por_municipio) {
+        this.por_municipio = por_municipio;
+    }
+
+    public boolean isPor_zona_escolar() {
+        return por_zona_escolar;
+    }
+
+    public void setPor_zona_escolar(boolean por_zona_escolar) {
+        this.por_zona_escolar = por_zona_escolar;
+    }
+
+    public boolean isPor_escuela() {
+        return por_escuela;
+    }
+
+    public void setPor_escuela(boolean por_escuela) {
+        this.por_escuela = por_escuela;
+    }
+
+    public boolean isPor_grupo() {
+        return por_grupo;
+    }
+
+    public void setPor_grupo(boolean por_grupo) {
+        this.por_grupo = por_grupo;
+    }
+
+    public boolean isDespliega_graficas() {
+        return despliega_graficas;
+    }
+
+    public void setDespliega_graficas(boolean despliega_graficas) {
+        this.despliega_graficas = despliega_graficas;
+    }
+
+    public boolean isDespliega_anova() {
+        return despliega_anova;
+    }
+
+    public void setDespliega_anova(boolean despliega_anova) {
+        this.despliega_anova = despliega_anova;
+    }
+
+    
     public List<UnidadAprendizaje> getUnidades_aprendizaje() {
         return unidades_aprendizaje;
     }

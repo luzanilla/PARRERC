@@ -219,6 +219,7 @@ public class ConstructorUnidadDeAprendizaje extends javax.swing.JDialog {
             this.modelosExamenes.get(i).setUnidades_aprendizaje(unidades_aprendizaje);
         }
         
+        //Imprimimos el contenido de cada unidad de aprensizaje para revisar que todo este correcto
         for(int i=0; i<this.modelosExamenes.get(0).getUnidades_aprendizaje().size(); i++) {
             String n = this.modelosExamenes.get(0).getUnidades_aprendizaje().get(i).getNombre() + ":";
             
