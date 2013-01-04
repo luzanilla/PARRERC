@@ -4,6 +4,8 @@
  */
 package entidades;
 
+import java.util.List;
+
 /**
  *
  * @author Erick
@@ -15,6 +17,15 @@ public class ZonaEscolar {
     private double puntaje_total_zona_escolar = 0.0;
     private double puntaje_promedio_zona_escolar;
     private double porcentaje_aciertos_zona_escolar;
+    private List<Escuela> escuelas;
+
+    public List<Escuela> getEscuelas() {
+        return escuelas;
+    }
+
+    public void setEscuelas(List<Escuela> escuelas) {
+        this.escuelas = escuelas;
+    }
 
     public String getNombre_zona_escolar() {
         return nombre_zona_escolar;

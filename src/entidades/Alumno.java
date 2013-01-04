@@ -89,6 +89,38 @@ public class Alumno {
         return this.respuestas_calificadas[indice];
     }
     
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getEscuela() {
+        return escuela;
+    }
+
+    public void setEscuela(String escuela) {
+        this.escuela = escuela;
+    }
+
+    public String getZona_escolar() {
+        return zona_escolar;
+    }
+
+    public void setZona_escolar(String zona_escolar) {
+        this.zona_escolar = zona_escolar;
+    }
+
+    public String getMunicipio() {
+        return municipio;
+    }
+
+    public void setMunicipio(String municipio) {
+        this.municipio = municipio;
+    }
+    
     private List<String> respuestas;
     private String id;
     private String modelo;
@@ -96,5 +128,9 @@ public class Alumno {
     private int cuartil = 0;
     private int[] respuestas_calificadas;
     private int num_items;
+    private String grupo;
+    private String escuela;
+    private String zona_escolar;
+    private String municipio;    
     
 }
