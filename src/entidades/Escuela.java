@@ -18,14 +18,14 @@ public class Escuela {
     private double puntaje_total_escuela = 0.0;
     private double puntaje_promedio_escuela;
     private double porcentaje_aciertos_escuela;
-    private List<Grupo> grupos;
+    private List<Turno> turnos;
 
-    public List<Grupo> getGrupos() {
-        return grupos;
+    public List<Turno> getTurnos() {
+        return turnos;
     }
 
-    public void setGrupos(List<Grupo> grupos) {
-        this.grupos = grupos;
+    public void setTurnos(List<Turno> turnos) {
+        this.turnos = turnos;
     }
 
     public int getFrecuencia_escuela() {

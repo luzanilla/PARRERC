@@ -397,7 +397,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                             .addComponent(boton_cambiar_grupo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jScrollPane7)))
                     .addComponent(jScrollPane1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boton_aceptar)
                     .addComponent(boton_cancelar))
@@ -575,7 +575,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 System.out.println("Alumnos Ordenada: " + this.modelosExamenes.get(j).getNombreModelo());
                 
                 for (int i = 0; i < this.modelosExamenes.get(j).getAlumnosOrdenada().size(); i++) {
-                    System.out.print(this.modelosExamenes.get(j).getAlumnosOrdenada().get(i).getAciertos() + ", ");
+                    System.out.print(this.modelosExamenes.get(j).getAlumnosOrdenada().get(i).getId() + ", ");
                 }
                 
                 System.out.println("");
@@ -1014,7 +1014,32 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                             if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_id) ) {                            
                                 alumno.setId(getValorCeldaEnString(cell));                            
                                 flag = false;
-                            }                        
+                            }
+                            
+                            if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_municipio) ) {                            
+                                alumno.setMunicipio(getValorCeldaEnString(cell));                            
+                                flag = false;
+                            }
+                            
+                            if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_zona_escolar) ) {                            
+                                alumno.setZona_escolar(getValorCeldaEnString(cell));                            
+                                flag = false;
+                            }
+                            
+                            if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_escuela) ) {                            
+                                alumno.setEscuela(getValorCeldaEnString(cell));                            
+                                flag = false;
+                            }
+                            
+                            if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_turno) ) {                            
+                                alumno.setTurno(getValorCeldaEnString(cell));                            
+                                flag = false;
+                            }
+                            
+                            if( this.modelosExamenes.get(j).getVariables().get(cell.getColumnIndex()).equalsIgnoreCase(this.variable_grupo) ) {                            
+                                alumno.setGrupo(getValorCeldaEnString(cell));                            
+                                flag = false;
+                            }
                             
                             alumno.setModelo(sheet.getSheetName());                            
                             alumno.addRespuesta(getValorCeldaEnString(cell)); 

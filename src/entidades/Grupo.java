@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class Grupo {
     private String id_grupo;
+    private String turno;
     private String escuela;
     private String zona_escolar;
     private String municipio;
@@ -20,6 +21,14 @@ public class Grupo {
     private double puntaje_promedio_grupo;
     private double porcentaje_aciertos_grupo;
     private List<Alumno> alumnos;
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
 
     public List<Alumno> getAlumnos() {
         return alumnos;
@@ -93,8 +102,9 @@ public class Grupo {
         this.municipio = municipio;
     }    
     
-    public Grupo(String id_grupo, String escuela, String zona_escolar, String municipio) {
+    public Grupo(String id_grupo, String turno, String escuela, String zona_escolar, String municipio) {
         this.id_grupo = id_grupo;
+        this.turno = turno;
         this.escuela = escuela;
         this.zona_escolar = zona_escolar;
         this.municipio = municipio;

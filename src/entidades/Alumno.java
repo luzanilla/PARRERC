@@ -120,6 +120,14 @@ public class Alumno {
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
     }
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }    
     
     private List<String> respuestas;
     private String id;
@@ -129,6 +137,7 @@ public class Alumno {
     private int[] respuestas_calificadas;
     private int num_items;
     private String grupo;
+    private String turno;
     private String escuela;
     private String zona_escolar;
     private String municipio;    
