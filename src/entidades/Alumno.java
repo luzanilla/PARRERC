@@ -59,6 +59,17 @@ public class Alumno {
 
     public void setAciertos(int aciertos) {
         this.aciertos = aciertos;
+        
+        double ac = (double) this.aciertos;
+        this.setPorcentaje_aciertos((ac/this.respuestas_calificadas.length)*100);
+    }
+    
+    public double getPorcentaje_aciertos() {
+        return porcentaje_aciertos;
+    }
+
+    public void setPorcentaje_aciertos(double porcentaje_aciertos) {
+        this.porcentaje_aciertos = porcentaje_aciertos;
     }
 
     public int getCuartil() {
@@ -133,6 +144,7 @@ public class Alumno {
     private String id;
     private String modelo;
     private int aciertos = 0;
+    private double porcentaje_aciertos = 0.0;    
     private int cuartil = 0;
     private int[] respuestas_calificadas;
     private int num_items;
