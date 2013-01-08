@@ -36,7 +36,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
     private List<JFreeChart> caract_graficas;
             
     /**
-     * Creates new form Caracterizacion
+     * Creates new form Caracterización
      */
     public Caracterizacion(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {
         this.modelosExamenes = modelosExamenes;

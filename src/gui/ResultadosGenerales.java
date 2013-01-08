@@ -10,12 +10,23 @@ import entidades.Grupo;
 import entidades.ModeloExamen;
 import entidades.Turno;
 import entidades.ZonaEscolar;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -32,7 +43,9 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
     private List<Double> puntaje_promedio_municipio;
     private List<Double> porcentaje_aciertos_municipio;   
     //Por municipio y zona escolar
-    private List<ZonaEscolar>[] zona_escolar_por_municipio;    
+    private List<ZonaEscolar>[] zona_escolar_por_municipio;  
+    
+    private List<JFreeChart> graficas;
     
     /**
      * Creates new form ResultadosGenerales
@@ -45,6 +58,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         
         realizarAnalisis();
         pintar_resultados();
+        reiniciarSeleccionAnalisis();
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -107,8 +121,13 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             if(this.modelosExamenes.get(i).isPor_escuela()) {
                 calcularPorEscuela(i);                
             }
-                        
+
+            if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                crearGraficas(i);
+            }
         }
+        
+        guardarImagenes();
     }
 
     private void calcularPorMunicipio(int indice_modelo) {                
@@ -432,6 +451,109 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         return grupo;
     }
     
+    private void crearGraficas(int i) {
+        graficas = new ArrayList<>();
+        
+        if(this.modelosExamenes.get(i).isPor_municipio()) {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                dataset.setValue(this.modelosExamenes.get(i).getPuntaje_promedio_municipio().get(j), "Promedio", this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j));           
+            }
+            
+            JFreeChart chart = ChartFactory.createBarChart("Puntaje promedio por Municipio", "Opciones de respuesta", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+            
+            chart.setBackgroundPaint(Color.white);
+
+            final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+            plot.setBackgroundPaint(new Color(240, 240, 240));
+            plot.setRangeGridlinePaint(Color.darkGray);
+            plot.setRangeGridlinesVisible(true);
+            plot.setDomainGridlinePaint(Color.darkGray);            
+            
+            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setUpperBound((100));
+            
+            // customise the renderer...
+            final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+            //renderer.setDrawShapes(true);
+            renderer.setSeriesPaint(0, new Color(79, 129, 189));
+            renderer.setMaximumBarWidth(.2);
+            
+            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(0, true);                        
+            renderer.setSeriesVisible(0, true);
+             
+            plot.setRenderer(renderer);
+              
+            graficas.add(chart);
+        }
+        
+        this.modelosExamenes.get(i).setGraficas_resultados_generales(graficas);
+    }
+    
+    private void guardarImagenes() {
+        File dir = new File("temp\\res_generales");                
+        
+        if(dir.exists()) {
+            borrarDirectorio(dir);                                   
+        }        
+        
+        if (dir.mkdirs()) {
+            for(int i=0; i<this.modelosExamenes.size(); i++) {
+                                
+                File dirModelo = new File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo());                                                               
+                
+                if (dirModelo.mkdirs()) {
+                    
+                    for(int j=0; j<this.modelosExamenes.get(i).getGraficas_resultados_generales().size(); j++) {                                                 
+                        
+                        try {
+                            String nombre_archivo = "";
+                            
+                            switch(j) {
+                                case 0:
+                                    nombre_archivo = "municipio";
+                                    break;
+                            }
+                            
+                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGraficas_resultados_generales().get(j), 500, 300);                                                        
+                            
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                                                
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al crear el directorio del modelo.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al crear el directorio temporal para imagenes.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //this.jDialog1.setVisible(false);
+    }
+    
+    private void borrarDirectorio(File directorio) {
+        File[] ficheros = directorio.listFiles();
+ 
+        for (int x=0;x<ficheros.length;x++) {
+            
+            if (ficheros[x].isDirectory()) {
+                borrarDirectorio(ficheros[x]);
+            }
+            
+            ficheros[x].delete();
+        }
+        
+        directorio.delete();
+    }
+    
     private void pintar_resultados() {
         String out = "";
         DecimalFormat df = new DecimalFormat("0.000");                
@@ -478,6 +600,22 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                 //cerramos renglón de tabla principal
                 out = out + "</td>";
                 out = out + "</tr>"; 
+                
+                
+                //Imprimimos gráfica por municipio
+                if(this.modelosExamenes.get(i).isPor_municipio()) {
+                    //abrimos renglón de tabla principal
+                    out = out + "<tr>";
+                    out = out + "<td style=\"text-align:center; border:0;\">";
+                    
+                    String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/municipio.PNG\"";                                
+                    out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                    out = out + "<br /><br />";
+                    
+                    //cerramos renglón de tabla principal
+                    out = out + "</td>";
+                    out = out + "</tr>";
+                }
             }                       
             
             //Por Zona Escolar
@@ -835,5 +973,11 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         
         this.panel_resultados.setText(out); 
     }
+
+    private void reiniciarSeleccionAnalisis() {
+        for(ModeloExamen mo : this.modelosExamenes) {
+            mo.reiniciarSeleccionAnalisis();
+        }
+    }        
     
 }

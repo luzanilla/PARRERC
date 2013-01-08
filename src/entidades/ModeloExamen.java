@@ -74,6 +74,25 @@ public class ModeloExamen {
     private List<Double> porcentaje_aciertos_municipio;
     //por zona escolar y municipio
     private List<ZonaEscolar>[] zona_escolar_por_municipio;
+    private List<JFreeChart> graficas_resultados_generales;
+
+    public List<JFreeChart> getGraficas_resultados_generales() {
+        return graficas_resultados_generales;
+    }
+
+    public void setGraficas_resultados_generales(List<JFreeChart> graficas_resultados_generales) {
+        this.graficas_resultados_generales = graficas_resultados_generales;
+    }
+    
+    //Reiniciamos la selección de tipo de análisis
+    public void reiniciarSeleccionAnalisis() {
+        this.por_municipio = false;
+        this.por_zona_escolar = false;
+        this.por_escuela = false;
+        this.por_grupo = false;
+        this.despliega_graficas = false;
+        this.despliega_anova = false;
+    }
 
     public List<ZonaEscolar>[] getZona_escolar_por_municipio() {
         return zona_escolar_por_municipio;

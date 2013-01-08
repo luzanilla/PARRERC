@@ -157,6 +157,14 @@ public class DefineVariablesAnalisis extends javax.swing.JDialog {
             if(this.check_grupo.isSelected()) {
                 this.modelosExamenes.get(i).setPor_grupo(true);
             }
+            
+            if(this.check_mostrar_graficas.isSelected()) {
+                this.modelosExamenes.get(i).setDespliega_graficas(true);
+            }
+            
+            if(this.check_desplegar_anova.isSelected()) {
+                this.modelosExamenes.get(i).setDespliega_anova(true);
+            }
         }
         
         this.dispose();
