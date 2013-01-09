@@ -5,6 +5,7 @@
 package entidades;
 
 import java.util.List;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -18,6 +19,24 @@ public class ZonaEscolar {
     private double puntaje_promedio_zona_escolar;
     private double porcentaje_aciertos_zona_escolar;
     private List<Escuela> escuelas;
+    private JFreeChart grafica_rg_zona;
+    private JFreeChart grafica_rg_zona_esc_turno;
+
+    public JFreeChart getGrafica_rg_zona_esc_turno() {
+        return grafica_rg_zona_esc_turno;
+    }
+
+    public void setGrafica_rg_zona_esc_turno(JFreeChart grafica_rg_zona_esc_turno) {
+        this.grafica_rg_zona_esc_turno = grafica_rg_zona_esc_turno;
+    }
+
+    public JFreeChart getGrafica_rg_zona() {
+        return grafica_rg_zona;
+    }
+
+    public void setGrafica_rg_zona(JFreeChart grafica_rg_zona) {
+        this.grafica_rg_zona = grafica_rg_zona;
+    }
 
     public List<Escuela> getEscuelas() {
         return escuelas;

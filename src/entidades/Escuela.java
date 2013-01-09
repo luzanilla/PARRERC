@@ -5,6 +5,7 @@
 package entidades;
 
 import java.util.List;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -19,6 +20,15 @@ public class Escuela {
     private double puntaje_promedio_escuela;
     private double porcentaje_aciertos_escuela;
     private List<Turno> turnos;
+    private JFreeChart grafica_rg_trunos_grupos;
+
+    public JFreeChart getGrafica_rg_trunos_grupos() {
+        return grafica_rg_trunos_grupos;
+    }
+
+    public void setGrafica_rg_trunos_grupos(JFreeChart grafica_rg_trunos_grupos) {
+        this.grafica_rg_trunos_grupos = grafica_rg_trunos_grupos;
+    }
 
     public List<Turno> getTurnos() {
         return turnos;
