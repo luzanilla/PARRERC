@@ -546,7 +546,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                         dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPuntaje_promedio_escuela(), "Promedio", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela());
                     }
                                         
-                    String titulo = nombre_zona_escolar + " " + nombre_municipio;
+                    String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
                     JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
             
                     chart.setBackgroundPaint(Color.white);
@@ -597,7 +597,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                                                                         
                     }
                                         
-                    String titulo = nombre_zona_escolar + " " + nombre_municipio;
+                    String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
                     JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
             
                     chart.setBackgroundPaint(Color.white);
