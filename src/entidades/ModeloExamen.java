@@ -74,16 +74,25 @@ public class ModeloExamen {
     private List<Double> porcentaje_aciertos_municipio;
     //por zona escolar y municipio
     private List<ZonaEscolar>[] zona_escolar_por_municipio;
-    private List<JFreeChart> graficas_resultados_generales;
+    private JFreeChart grafica_rg_municipio;
+    private List<JFreeChart> graficas_rg_zona_escolar;
 
-    public List<JFreeChart> getGraficas_resultados_generales() {
-        return graficas_resultados_generales;
+    public JFreeChart getGrafica_rg_municipio() {
+        return grafica_rg_municipio;
     }
 
-    public void setGraficas_resultados_generales(List<JFreeChart> graficas_resultados_generales) {
-        this.graficas_resultados_generales = graficas_resultados_generales;
+    public void setGrafica_rg_municipio(JFreeChart grafica_rg_municipio) {
+        this.grafica_rg_municipio = grafica_rg_municipio;
     }
-    
+
+    public List<JFreeChart> getGraficas_rg_zona_escolar() {
+        return graficas_rg_zona_escolar;
+    }
+
+    public void setGraficas_rg_zona_escolar(List<JFreeChart> graficas_rg_zona_escolar) {
+        this.graficas_rg_zona_escolar = graficas_rg_zona_escolar;
+    }
+            
     //Reiniciamos la selección de tipo de análisis
     public void reiniciarSeleccionAnalisis() {
         this.por_municipio = false;
