@@ -140,6 +140,22 @@ public class Alumno {
         this.turno = turno;
     }    
     
+    public int[] getPuntajes_ua() {
+        return puntajes_ua;
+    }
+
+    public void setPuntajes_ua(int[] puntajes_ua) {
+        this.puntajes_ua = puntajes_ua;
+    }
+    
+    public double[] getPorcentajes_ua() {
+        return porcentajes_ua;
+    }
+
+    public void setPorcentajes_ua(double[] porcentajes_ua) {
+        this.porcentajes_ua = porcentajes_ua;
+    }
+    
     private List<String> respuestas;
     private String id;
     private String modelo;
@@ -152,6 +168,8 @@ public class Alumno {
     private String turno;
     private String escuela;
     private String zona_escolar;
-    private String municipio;    
+    private String municipio;  
+    private int[] puntajes_ua; 
+    private double[] porcentajes_ua; 
     
 }

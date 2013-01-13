@@ -108,6 +108,8 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
     // End of variables declaration//GEN-END:variables
 
     private void realizarAnalisis() {
+        boolean flag = false;
+        
         for(int i=0; i<this.modelosExamenes.size(); i++) {
             
             if(this.modelosExamenes.get(i).isPor_municipio()) {
@@ -124,10 +126,13 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
 
             if(this.modelosExamenes.get(i).isDespliega_graficas()) {
                 crearGraficas(i);
+                flag = true;
             }
         }
         
-        guardarImagenes();
+        if(flag) {
+            guardarImagenes();
+        }        
     }
 
     private void calcularPorMunicipio(int indice_modelo) {                
@@ -657,7 +662,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                                                         
                         }
                                         
-                        String titulo = nombre_zona_escolar + " " + nombre_municipio + " " + nombre_escuela;
+                        String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio + ", Escuela " + nombre_escuela;
                         JFreeChart chart = ChartFactory.createBarChart(titulo, "Grupo", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         chart.setBackgroundPaint(Color.white);
@@ -1191,7 +1196,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                                         out = out + "<td style=\"text-align:left;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size() + "\">" + nombre_turno + " </td>";
                                     }
                                     
-                                    out = out + "<td style=\"text-align:left;\">" + nombre_grupo + " </td>";
+                                    out = out + "<td style=\"text-align:center;\">" + nombre_grupo + " </td>";
                                     out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPuntaje_promedio_grupo()) + "</td>";
                                     out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPorcentaje_aciertos_grupo()) + "%</td>";
                                     out = out + "</tr>";
@@ -1301,7 +1306,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                                         if(o!=0) {
                                             out = out + "<tr>";
                                         } else {
-                                            out = out + "<td style=\"text-align:left;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().size() + "\">" + nombre_grupo + " </td>";
+                                            out = out + "<td style=\"text-align:center;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().size() + "\">" + nombre_grupo + " </td>";
                                         }
                                         
                                         out = out + "<td style=\"text-align:left;\">" + id_alumno + " </td>";

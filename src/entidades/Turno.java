@@ -20,6 +20,42 @@ public class Turno {
     private double puntaje_promedio_turno;
     private double porcentaje_aciertos_turno;
     private List<Grupo> grupos;
+    private double[] puntaje_total_ua;
+    private double[] frecuencia_ua;  
+    private double[] promedios_ua;
+    private double[] porcentajes_aciertos_ua;
+
+    public double[] getPuntaje_total_ua() {
+        return puntaje_total_ua;
+    }
+
+    public void setPuntaje_total_ua(double[] puntaje_total_ua) {
+        this.puntaje_total_ua = puntaje_total_ua;
+    }
+
+    public double[] getFrecuencia_ua() {
+        return frecuencia_ua;
+    }
+
+    public void setFrecuencia_ua(double[] frecuencia_ua) {
+        this.frecuencia_ua = frecuencia_ua;
+    }
+
+    public double[] getPromedios_ua() {
+        return promedios_ua;
+    }
+
+    public void setPromedios_ua(double[] promedios_ua) {
+        this.promedios_ua = promedios_ua;
+    }
+
+    public double[] getPorcentajes_aciertos_ua() {
+        return porcentajes_aciertos_ua;
+    }
+
+    public void setPorcentajes_aciertos_ua(double[] porcentajes_aciertos_ua) {
+        this.porcentajes_aciertos_ua = porcentajes_aciertos_ua;
+    }
 
     public String getId_turno() {
         return id_turno;

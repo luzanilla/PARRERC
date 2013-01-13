@@ -76,7 +76,33 @@ public class ModeloExamen {
     private List<ZonaEscolar>[] zona_escolar_por_municipio;
     private JFreeChart grafica_rg_municipio;
     private List<JFreeChart> graficas_rg_zona_escolar;
+    
+    //Variables de resultados por unidad de aprendizaje
+    //por municipio    
+    private double[][] promedio_municipio_ua;    
+    private double[][] porcentaje_aciertos_municipio_ua;
 
+    //por zona escolar y municipio
+    //private List<ZonaEscolar>[] zona_escolar_por_municipio;
+    //private JFreeChart grafica_rg_municipio;
+    //private List<JFreeChart> graficas_rg_zona_escolar;
+    
+    public double[][] getPromedio_municipio_ua() {
+        return promedio_municipio_ua;
+    }
+
+    public void setPromedio_municipio_ua(double[][] promedio_municipio_ua) {
+        this.promedio_municipio_ua = promedio_municipio_ua;
+    }
+
+    public double[][] getPorcentaje_aciertos_municipio_ua() {
+        return porcentaje_aciertos_municipio_ua;
+    }
+
+    public void setPorcentaje_aciertos_municipio_ua(double[][] porcentaje_aciertos_municipio_ua) {
+        this.porcentaje_aciertos_municipio_ua = porcentaje_aciertos_municipio_ua;
+    }
+    
     public JFreeChart getGrafica_rg_municipio() {
         return grafica_rg_municipio;
     }
@@ -505,4 +531,9 @@ public class ModeloExamen {
     public int getIndiceVar(String var) {
         return this.variables.indexOf(var);
     }
+    
+    public int getIndiceItem(String var) {
+        return this.vars_items.indexOf(var);
+    }
+       
 }

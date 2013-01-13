@@ -4,20 +4,40 @@
  */
 package gui;
 
+import entidades.Alumno;
+import entidades.Escuela;
+import entidades.Grupo;
 import entidades.ModeloExamen;
+import entidades.Turno;
+import entidades.ZonaEscolar;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
  * @author UEE
  */
 public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
-
     private List<ModeloExamen> modelosExamenes;
     private ConstructorUnidadDeAprendizaje define_unidades;
     private DefineVariablesAnalisis dv;
+    private List<String> opciones_respuesta_municipio; 
+    private List<ZonaEscolar>[] zona_escolar_por_municipio;
     
     /**
      * Creates new form ResultadosPorUnidadAprendizaje
@@ -33,6 +53,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         dv = new DefineVariablesAnalisis(this.modelosExamenes, jDesktopPane1);
         
         realizarAnalisis();
+        pintar_resultados();
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -51,7 +72,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        panel_resultados = new javax.swing.JEditorPane();
 
         setClosable(true);
         setIconifiable(true);
@@ -59,9 +80,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         setResizable(true);
         setTitle("Resultados por Unidad de Aprendizaje");
 
-        jEditorPane1.setEditable(false);
-        jEditorPane1.setContentType("text/html");
-        jScrollPane1.setViewportView(jEditorPane1);
+        panel_resultados.setEditable(false);
+        panel_resultados.setContentType("text/html");
+        jScrollPane1.setViewportView(panel_resultados);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -71,17 +92,1379 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JEditorPane panel_resultados;
     // End of variables declaration//GEN-END:variables
 
     private void realizarAnalisis() {
+        boolean flag = false;
         
+        for(int i=0; i<this.modelosExamenes.size(); i++) {
+            calculaPuntajeAlumnoUA(i);
+            
+            if(this.modelosExamenes.get(i).isPor_municipio()) {
+                calcularPorMunicipio(i);                
+            }
+            
+            if(this.modelosExamenes.get(i).isPor_zona_escolar()) {
+                calcularPorZonaEscolar(i);
+            }
+            
+            if(this.modelosExamenes.get(i).isPor_escuela()) {
+                calcularPorEscuela(i);   
+                calculaTurnos(i);
+            }
+            
+            if(this.modelosExamenes.get(i).isPor_grupo()) {
+                calculaGrupos(i);                   
+            }
+
+            if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                //crearGraficas(i);
+                flag = true;
+            }
+        }
+        
+        if(flag) {
+            //guardarImagenes();
+        } 
+    }
+
+    private void calculaPuntajeAlumnoUA(int indice_modelo) {
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {
+            int[] puntajes_ua = new int[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            double[] porcentajes_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            
+            for(int j=0; j<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); j++) {
+                
+                for(int k=0; k<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(j).getItems().size(); k++) {
+                    String item = this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(j).getItems().get(k);
+                    int indice_item = this.modelosExamenes.get(indice_modelo).getIndiceItem(item);
+                    
+                    puntajes_ua[j] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuestaCalificada(indice_item);
+                }
+                
+                porcentajes_ua[j] = (((double)puntajes_ua[j])/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(j).getItems().size())*100.0;
+            }
+            
+            this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).setPuntajes_ua(puntajes_ua);
+            this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).setPorcentajes_ua(porcentajes_ua);
+        }
+    }
+    
+    private void calcularPorMunicipio(int indice_modelo) {        
+        int puntaje_total_municipio_ua[][] = new int[this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size()][this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+        double promedio_municipio_ua[][] = new double[this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size()][this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+        double porcentaje_aciertos_municipio_ua[][] = new double[this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size()][this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+        
+        opciones_respuesta_municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio();                  
+        
+        for(int q=0; q<opciones_respuesta_municipio.size(); q++) {
+            String municipio = this.opciones_respuesta_municipio.get(q);
+            double cont_frec = 0.0;
+            
+            //Calculamos la frecuencia de cada municipio y su puntaje total por unidad de aprendizaje para despues calcular el puntaje promedio por municipio y porcentaje de aciertos
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {            
+                String respuesta;               
+                double aciertos_municipio[] = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                respuesta = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getMunicipio();                
+                
+                if(municipio.equalsIgnoreCase(respuesta)) {
+                    cont_frec++;
+                    
+                    for(int j=0; j<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); j++) {
+                        puntaje_total_municipio_ua[q][j] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getPuntajes_ua()[j];                                                
+                    }
+                                                                                
+                }                                               
+
+            }                        
+            
+            //Calculamos el puntaje promedio por municipio y porcentaje de aciertos
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+                double promedio = (puntaje_total_municipio_ua[q][i]/cont_frec);
+                double porcentaje = (promedio/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(i).getItems().size())*100;
+                
+                promedio_municipio_ua[q][i] = promedio;                        
+                porcentaje_aciertos_municipio_ua[q][i] = porcentaje;
+
+                System.out.println(promedio);
+            }
+        }            
+                
+        this.modelosExamenes.get(indice_modelo).setPromedio_municipio_ua(promedio_municipio_ua);
+        this.modelosExamenes.get(indice_modelo).setPorcentaje_aciertos_municipio_ua(porcentaje_aciertos_municipio_ua);
+    }
+
+    private void calcularPorZonaEscolar(int indice_modelo) {
+        //Si eligió la opción por municipio calculamos las zonas escolares por municipio
+        if(this.modelosExamenes.get(indice_modelo).isPor_municipio()) {
+            zona_escolar_por_municipio = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio();
+            double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+            
+            int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+            int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
+            
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {                
+                String municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_municipio);
+                String zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_zona_escolar);
+                double aciertos = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getAciertos();
+                
+                int indice_opcion_municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().indexOf(municipio);                
+                
+                List<ZonaEscolar> zonas_temp;
+                zonas_temp = zona_escolar_por_municipio[indice_opcion_municipio];                                  
+                
+                boolean flag = false;
+                int j=0;
+                
+                for(j=0; j<zonas_temp.size(); j++) {
+                    if(zonas_temp.get(j).getNombre_zona_escolar().equalsIgnoreCase(zona_escolar)) {                        
+                        
+                        for(int k=0; k<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); k++) {  
+                            frecuencia_ua[k]++;                            
+                            puntaje_total_ua[k] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getPuntajes_ua()[k];
+                            
+                            puntaje_promedio_ua[k] = puntaje_total_ua[k]/frecuencia_ua[k];
+                            porcentaje_ua[k] = (puntaje_promedio_ua[k]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(k).getItems().size())*100;
+                        }                                                
+                        
+                        zonas_temp.get(j).setPuntaje_total_ua(puntaje_total_ua);
+                        zonas_temp.get(j).setFrecuencia_ua(frecuencia_ua);
+                        zonas_temp.get(j).setPromedios_ua(puntaje_promedio_ua);
+                        zonas_temp.get(j).setPorcentajes_aciertos_ua(porcentaje_ua);
+                                                
+                        break;
+                    }
+                }                                                                                
+                
+                zona_escolar_por_municipio[indice_opcion_municipio] = zonas_temp;
+                this.modelosExamenes.get(indice_modelo).setZona_escolar_por_municipio(zona_escolar_por_municipio);
+            }
+            
+        }
+                
+    }
+
+    private void calcularPorEscuela(int indice_modelo) {
+        
+        if(this.modelosExamenes.get(indice_modelo).isPor_escuela()) {
+            
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size(); i++) {
+                String municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i);
+                
+                if(this.modelosExamenes.get(indice_modelo).isPor_zona_escolar()) {
+                    
+                    for(int j=0; j<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].size(); j++) {
+                        ZonaEscolar zona = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j);
+                        String nombre_zona_escolar = zona.getNombre_zona_escolar();
+                        List<Escuela> escuelas =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas();
+                        
+                        int i_es = 0;
+                        
+                        for(Escuela es : escuelas) {
+                            double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                            double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                            double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                            double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                            
+                            for(int k=0; k<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); k++) {
+                                int indice_var_escuela = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarEscuela());
+                                int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+                                int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
+                                String res_escuela = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_var_escuela);                                
+                                String res_municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_municipio);
+                                String res_zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_zona_escolar);
+                                
+                                if(municipio.equalsIgnoreCase(res_municipio) && nombre_zona_escolar.equalsIgnoreCase(res_zona_escolar) && es.getId_escuela().equalsIgnoreCase(res_escuela)) {                                    
+                                    
+                                    for(int m=0; m<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); m++) {                                              
+                                        frecuencia_ua[m]++;                            
+                                        puntaje_total_ua[m] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getPuntajes_ua()[m];
+
+                                        puntaje_promedio_ua[m] = puntaje_total_ua[m]/frecuencia_ua[m];
+                                        porcentaje_ua[m] = (puntaje_promedio_ua[m]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(m).getItems().size())*100;                                                                                
+                                    }
+
+                                }
+                                                                
+                            }
+                            
+                            this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).setFrecuencia_ua(frecuencia_ua);
+                            this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).setPuntaje_total_ua(puntaje_total_ua);
+                            this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).setPromedios_ua(puntaje_promedio_ua);
+                            this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).setPorcentajes_aciertos_ua(porcentaje_ua);                                                        
+                            
+                            i_es++;
+                        }
+                                                                                                                   
+                    }
+                }
+            }
+                        
+        }
+    }
+    
+    private void calculaTurnos(int indice_modelo) {
+        
+        if(this.modelosExamenes.get(indice_modelo).isPor_escuela()) {
+            
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size(); i++) {
+                String municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i);
+                
+                if(this.modelosExamenes.get(indice_modelo).isPor_zona_escolar()) {
+                    
+                    for(int j=0; j<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].size(); j++) {
+                        ZonaEscolar zona = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j);
+                        String nombre_zona_escolar = zona.getNombre_zona_escolar();
+                        List<Escuela> escuelas =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas();
+                        
+                        int i_es = 0;
+                        
+                        for(Escuela es : escuelas) {
+                            List<Turno> turnos =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos();
+                            
+                            int i_tur = 0;
+                            
+                            for(Turno tur : turnos) {
+                                double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                
+                                for(int k=0; k<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); k++) {
+                                    int indice_var_escuela = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarEscuela());
+                                    int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+                                    int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
+                                    int indice_turno = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarTurno());
+                                    String res_escuela = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_var_escuela);                                
+                                    String res_municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_municipio);
+                                    String res_zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_zona_escolar);
+                                    String res_turno = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_turno);                                
+
+                                    if(municipio.equalsIgnoreCase(res_municipio) && nombre_zona_escolar.equalsIgnoreCase(res_zona_escolar) && es.getId_escuela().equalsIgnoreCase(res_escuela) && tur.getId_turno().equalsIgnoreCase(res_turno)) {                                    
+
+                                        for(int m=0; m<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); m++) {                                              
+                                            frecuencia_ua[m]++;                            
+                                            puntaje_total_ua[m] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getPuntajes_ua()[m];
+
+                                            puntaje_promedio_ua[m] = puntaje_total_ua[m]/frecuencia_ua[m];
+                                            porcentaje_ua[m] = (puntaje_promedio_ua[m]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(m).getItems().size())*100;                                                                                
+                                        }
+
+                                    }
+
+                                }
+
+                                this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).setFrecuencia_ua(frecuencia_ua);
+                                this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).setPuntaje_total_ua(puntaje_total_ua);
+                                this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).setPromedios_ua(puntaje_promedio_ua);
+                                this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).setPorcentajes_aciertos_ua(porcentaje_ua); 
+                                
+                                i_tur++;
+                            }                                                                                                               
+                            
+                            i_es++;
+                        }
+                                                                                                                   
+                    }
+                }
+            }
+                        
+        }
+                                                
+    }
+    
+    private void calculaGrupos(int indice_modelo) {
+        if(this.modelosExamenes.get(indice_modelo).isPor_grupo()) {
+            
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size(); i++) {
+                String municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i);
+                
+                if(this.modelosExamenes.get(indice_modelo).isPor_zona_escolar()) {
+                    
+                    for(int j=0; j<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].size(); j++) {
+                        ZonaEscolar zona = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j);
+                        String nombre_zona_escolar = zona.getNombre_zona_escolar();
+                        List<Escuela> escuelas =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas();
+                        
+                        int i_es = 0;
+                        
+                        for(Escuela es : escuelas) {
+                            List<Turno> turnos =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos();
+                            
+                            int i_tur = 0;
+                            
+                            for(Turno tur : turnos) {
+                                List<Grupo> grupos =this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).getGrupos();
+                                int i_gru = 0;
+                                
+                                for(Grupo gru : grupos) {
+                                    double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                    double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                    double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                                    double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+
+                                    for(int k=0; k<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); k++) {
+                                        int indice_var_escuela = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarEscuela());
+                                        int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+                                        int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
+                                        int indice_turno = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarTurno());
+                                        int indice_grupo = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarGrupo());
+                                        String res_escuela = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_var_escuela);                                
+                                        String res_municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_municipio);
+                                        String res_zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_zona_escolar);
+                                        String res_turno = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_turno);                                
+                                        String res_grupo = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_grupo);                                
+
+                                        if(municipio.equalsIgnoreCase(res_municipio) && nombre_zona_escolar.equalsIgnoreCase(res_zona_escolar) && es.getId_escuela().equalsIgnoreCase(res_escuela) && tur.getId_turno().equalsIgnoreCase(res_turno) && gru.getId_grupo().equalsIgnoreCase(res_grupo)) {                                    
+
+                                            for(int m=0; m<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); m++) {                                              
+                                                frecuencia_ua[m]++;                            
+                                                puntaje_total_ua[m] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getPuntajes_ua()[m];
+
+                                                puntaje_promedio_ua[m] = puntaje_total_ua[m]/frecuencia_ua[m];
+                                                porcentaje_ua[m] = (puntaje_promedio_ua[m]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(m).getItems().size())*100;                                                                                
+                                            }
+
+                                        }
+
+                                    }
+
+                                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).getGrupos().get(i_gru).setFrecuencia_ua(frecuencia_ua);
+                                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).getGrupos().get(i_gru).setPuntaje_total_ua(puntaje_total_ua);
+                                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).getGrupos().get(i_gru).setPromedios_ua(puntaje_promedio_ua);
+                                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(i_es).getTurnos().get(i_tur).getGrupos().get(i_gru).setPorcentajes_aciertos_ua(porcentaje_ua); 
+                                    
+                                    i_gru++;
+                                }                                                                
+                                
+                                i_tur++;
+                            }                                                                                                               
+                            
+                            i_es++;
+                        }
+                                                                                                                   
+                    }
+                }
+            }
+                        
+        }
+    }
+
+    /*    
+    private void crearGraficas(int i) {        
+        
+        if(this.modelosExamenes.get(i).isPor_municipio()) {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                dataset.setValue(this.modelosExamenes.get(i).getPuntaje_promedio_municipio().get(j), "Promedio", this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j));           
+            }
+            
+            JFreeChart chart = ChartFactory.createBarChart("Puntaje promedio por Municipio", "Municipio", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+            
+            chart.setBackgroundPaint(Color.white);
+
+            final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+            plot.setBackgroundPaint(new Color(240, 240, 240));
+            plot.setRangeGridlinePaint(Color.darkGray);
+            plot.setRangeGridlinesVisible(true);
+            plot.setDomainGridlinePaint(Color.darkGray);            
+            
+            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setUpperBound((100));
+            
+            // customise the renderer...
+            final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+            //renderer.setDrawShapes(true);
+            renderer.setSeriesPaint(0, new Color(79, 129, 189));
+            renderer.setMaximumBarWidth(.2);
+            
+            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(0, true);                        
+            renderer.setSeriesVisible(0, true);
+             
+            plot.setRenderer(renderer);
+              
+            this.modelosExamenes.get(i).setGrafica_rg_municipio(chart);
+        }
+        
+        if(this.modelosExamenes.get(i).isPor_zona_escolar()) {            
+            graficas = new ArrayList<>();
+            
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPuntaje_promedio_zona_escolar(), "Promedio", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar());
+                }                
+                
+                JFreeChart chart = ChartFactory.createBarChart(nombre_municipio, "Zona escolar", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+            
+                chart.setBackgroundPaint(Color.white);
+
+                final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+                plot.setBackgroundPaint(new Color(240, 240, 240));
+                plot.setRangeGridlinePaint(Color.darkGray);
+                plot.setRangeGridlinesVisible(true);
+                plot.setDomainGridlinePaint(Color.darkGray);            
+
+                final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+                rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+
+                // customise the renderer...
+                final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+                //renderer.setDrawShapes(true);
+                renderer.setSeriesPaint(0, new Color(79, 129, 189));
+                renderer.setMaximumBarWidth(.2);
+
+                renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+                renderer.setSeriesItemLabelsVisible(0, true);                        
+                renderer.setSeriesVisible(0, true);
+
+                plot.setRenderer(renderer);
+
+                graficas.add(chart);
+            }                                                
+            
+            this.modelosExamenes.get(i).setGraficas_rg_zona_escolar(graficas);
+        }       
+        
+        if(this.modelosExamenes.get(i).isPor_escuela()) {                        
+            //Creamos las graficas por escuela
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                 
+                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+                    String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                    
+                    
+                    for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                        String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
+                        dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPuntaje_promedio_escuela(), "Promedio", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela());
+                    }
+                                        
+                    String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
+                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+            
+                    chart.setBackgroundPaint(Color.white);
+
+                    final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+                    plot.setBackgroundPaint(new Color(240, 240, 240));
+                    plot.setRangeGridlinePaint(Color.darkGray);
+                    plot.setRangeGridlinesVisible(true);
+                    plot.setDomainGridlinePaint(Color.darkGray);            
+
+                    final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+                    rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+
+                    // customise the renderer...
+                    final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+                    //renderer.setDrawShapes(true);
+                    renderer.setSeriesPaint(0, new Color(79, 129, 189));
+                    renderer.setMaximumBarWidth(.2);
+
+                    renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+                    renderer.setSeriesItemLabelsVisible(0, true);                        
+                    renderer.setSeriesVisible(0, true);
+
+                    plot.setRenderer(renderer);
+                    
+                    this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).setGrafica_rg_zona(chart);                    
+                }                
+                                
+            }     
+            
+            //Creamos las graficas por turno
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                 
+                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+                    String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                    
+                    
+                    for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                        String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
+                        
+                        for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
+                            String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
+                            
+                            dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPuntaje_promedio_turno(), nombre_turno, nombre_escuela);
+                        }
+                                                                        
+                    }
+                                        
+                    String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
+                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+            
+                    chart.setBackgroundPaint(Color.white);
+
+                    final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+                    plot.setBackgroundPaint(new Color(240, 240, 240));
+                    plot.setRangeGridlinePaint(Color.darkGray);
+                    plot.setRangeGridlinesVisible(true);
+                    plot.setDomainGridlinePaint(Color.darkGray);            
+
+                    final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+                    rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+
+                    // customise the renderer...
+                    final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+                    //renderer.setDrawShapes(true);
+                    renderer.setSeriesPaint(0, new Color(79, 129, 189));
+                    renderer.setMaximumBarWidth(.2);
+                    
+                    renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+                    renderer.setSeriesItemLabelsVisible(0, true);                        
+                    renderer.setSeriesVisible(0, true);
+                    
+                    renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
+                    renderer.setSeriesItemLabelsVisible(1, true);                        
+                    renderer.setSeriesVisible(1, true);                    
+
+                    plot.setRenderer(renderer);
+                    
+                    this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).setGrafica_rg_zona_esc_turno(chart);                    
+                }                
+                                
+            }
+                       
+        }
+        
+        if(this.modelosExamenes.get(i).isPor_grupo()) {                        
+            //Creamos las graficas por grupo
+            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                 
+                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {                    
+                    String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                    
+                    
+                    for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+                        String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
+                        
+                        for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
+                            String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
+                            
+                            for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
+                                    String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();
+                                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPuntaje_promedio_grupo(), nombre_turno, nombre_grupo);
+                            }
+                                                        
+                        }
+                                        
+                        String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio + ", Escuela " + nombre_escuela;
+                        JFreeChart chart = ChartFactory.createBarChart(titulo, "Grupo", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+
+                        chart.setBackgroundPaint(Color.white);
+
+                        final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+
+                        plot.setBackgroundPaint(new Color(240, 240, 240));
+                        plot.setRangeGridlinePaint(Color.darkGray);
+                        plot.setRangeGridlinesVisible(true);
+                        plot.setDomainGridlinePaint(Color.darkGray);            
+
+                        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+                        rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+
+                        // customise the renderer...
+                        final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+                        //renderer.setDrawShapes(true);
+                        renderer.setSeriesPaint(0, new Color(79, 129, 189));
+                        renderer.setMaximumBarWidth(.2);
+
+                        renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+                        renderer.setSeriesItemLabelsVisible(0, true);                        
+                        renderer.setSeriesVisible(0, true);
+
+                        renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
+                        renderer.setSeriesItemLabelsVisible(1, true);                        
+                        renderer.setSeriesVisible(1, true);                    
+
+                        plot.setRenderer(renderer);
+
+                        this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).setGrafica_rg_trunos_grupos(chart);
+                    }
+                                                                                
+                }                
+                                
+            }                            
+                       
+        }
+                                                                                                
+    }
+    
+    private void guardarImagenes() {
+        File dir = new File("temp\\res_generales");                
+        
+        if(dir.exists()) {
+            borrarDirectorio(dir);                                   
+        }        
+        
+        if (dir.mkdirs()) {
+            for(int i=0; i<this.modelosExamenes.size(); i++) {
+                                
+                File dirModelo = new File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo());                                                               
+                
+                if (dirModelo.mkdirs()) {
+                    
+                    if(this.modelosExamenes.get(i).isPor_municipio()) {
+                        try {
+                            String nombre_archivo = "municipios";                            
+                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGrafica_rg_municipio(), 500, 300);
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                    } 
+                    
+                    if(this.modelosExamenes.get(i).isPor_zona_escolar()) {
+                        
+                        try {
+                            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                                String nombre_archivo = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                                                                
+                                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGraficas_rg_zona_escolar().get(j), 500, 300);
+                            }
+                                                        
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                    } 
+                    
+                    if(this.modelosExamenes.get(i).isPor_escuela()) {
+                        
+                        try {
+                            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                                
+                                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                                    String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                                    String nombre_archivo = nombre_zona_escolar + "_" + nombre_municipio;
+                                    
+                                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getGrafica_rg_zona(), 500, 300);
+                                    
+                                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_turno.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getGrafica_rg_zona_esc_turno(), 500, 300);
+                                }
+                                                                                                
+                            }
+                                                        
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                    } 
+                    
+                    if(this.modelosExamenes.get(i).isPor_grupo()) {
+                        
+                        try {
+                            for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
+                                String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                                
+                                for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                                    String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                                    
+                                    for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {                                        
+                                        String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                        
+                                        String nombre_archivo = nombre_zona_escolar + "_" + nombre_municipio + "_" + nombre_escuela;
+                                    
+                                        ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_generales\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_grupo.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getGrafica_rg_trunos_grupos(), 500, 300);
+                                    }                                    
+                                                                        
+                                }
+                                                                                                
+                            }
+                                                        
+                        } catch (java.io.IOException exc) {
+                            JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+                        }
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al crear el directorio del modelo.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al crear el directorio temporal para imagenes.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //this.jDialog1.setVisible(false);
+    }
+    
+    private void borrarDirectorio(File directorio) {
+        File[] ficheros = directorio.listFiles();
+ 
+        for (int x=0;x<ficheros.length;x++) {
+            
+            if (ficheros[x].isDirectory()) {
+                borrarDirectorio(ficheros[x]);
+            }
+            
+            ficheros[x].delete();
+        }
+        
+        directorio.delete();
+    }*/
+    
+    private void pintar_resultados() {
+        String out = "";
+        DecimalFormat df = new DecimalFormat("0.000");                
+        
+        for(int i=0; i<this.modelosExamenes.size(); i++) {                                
+            out = out +
+                    "<table align=\"center\" width=\"550px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<caption style=\"text-align:center; font-weight:bold; font-size: 13px;\"> " + this.modelosExamenes.get(i).getNombreModelo() + "</caption>";
+            
+            //Por municipio
+            if(this.modelosExamenes.get(i).isPor_municipio()) { 
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Municipio (Puntaje y porcentarje promedio)</strong></h3>";
+                out = out +
+                    "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                    
+                    + "<tr>";
+
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Municipio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Puntaje promedio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje de aciertos</td>";
+                out = out + "</tr>";                                  
+
+                out = out + "<tr>";                 
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+                
+                out = out + "</tr>";                                  
+
+                out = out + "<tr>";
+
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                                             
+
+                    if(j!=0) {
+                        out = out + "<tr>";
+                    }
+
+                    out = out + "<td style=\"text-align:left;\">" + this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j) + " </td>";
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                        out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getPromedio_municipio_ua()[j][k]) + "</td>";
+                    }
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                        out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getPorcentaje_aciertos_municipio_ua()[j][k]) + "%</td>";
+                    }
+                    
+                    out = out + "</tr>";                                        
+                }
+
+
+                out = out + "</table>";
+                out = out + "<br /><br />";
+                
+                //cerramos renglón de tabla principal
+                out = out + "</td>";
+                out = out + "</tr>"; 
+                
+                
+                //Imprimimos gráfica por municipio
+                if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                    //abrimos renglón de tabla principal
+                    out = out + "<tr>";
+                    out = out + "<td style=\"text-align:center; border:0;\">";
+                    
+                    String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/municipios.PNG\"";                                
+                    out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                    out = out + "<br /><br />";
+                    
+                    //cerramos renglón de tabla principal
+                    out = out + "</td>";
+                    out = out + "</tr>";
+                }
+            }                       
+            
+            //Por Zona Escolar
+            if(this.modelosExamenes.get(i).isPor_zona_escolar()) {
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Zona Escolar (Puntaje y porcentarje promedio)</strong></h3>";
+                out = out +
+                        "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        + "<tr>";
+                
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Puntaje promedio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje de aciertos</td>";
+                out = out + "</tr>";                                  
+
+                out = out + "<tr>";                 
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+                
+                out = out + "</tr>";                                 
+
+                out = out + "<tr>";
+               
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {
+                    String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);                                                            
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                        String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                        
+                        if(k!=0) {
+                            out = out + "<tr>";
+                        }            
+                        
+                        out = out + "<td style=\"text-align:left;\">Zona " + nombre_zona + " " + nombre_municipio + "</td>";
+                        
+                        for(int l=0; l<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); l++) {
+                            out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPromedios_ua()[l]) + "</td>";
+                        }
+                        
+                        for(int l=0; l<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); l++) {
+                            out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPorcentajes_aciertos_ua()[l]) + "%</td>";
+                        }
+                                                                        
+                        out = out + "</tr>";                        
+                    }
+                                                                                 
+                }   
+                out = out + "</table>";
+                out = out + "<br /><br />"; 
+                                                
+                //cerramos renglón de tabla principal                
+                out = out + "</td>";
+                out = out + "</tr>"; 
+                
+                
+                //Imprimimos gráfica por zona escolar
+                if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                    for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                                 
+                        String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+
+                        //abrimos renglón de tabla principal
+                        out = out + "<tr>";
+                        out = out + "<td style=\"text-align:center; border:0;\">";
+
+                        String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_municipio + ".PNG\"";
+                        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                        out = out + "<br /><br />";
+
+                        //cerramos renglón de tabla principal                
+                        out = out + "</td>";
+                        out = out + "</tr>"; 
+                    } 
+                }                                                                       
+                                
+            }
+            
+            //Por Escuela
+            if(this.modelosExamenes.get(i).isPor_escuela()) {
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Escuela (Puntaje y porcentarje promedio)</strong></h3>";
+                
+                out = out +
+                        "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        + "<tr>";
+                    
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Escuela</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Puntaje promedio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje de aciertos</td>";                                    
+                out = out + "</tr>"; 
+                
+                out = out + "<tr>";                 
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+                
+                out = out + "</tr>";
+
+                out = out + "<tr>";
+                
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {
+                    String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);                                        
+                                        
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                        String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                                                
+                                                                       
+                        for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                            String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
+                            
+                            if(l!=0) {
+                                out = out + "<tr>";
+                            } else {
+                                out = out + "<td style=\"text-align:left;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size() + "\">Zona " + nombre_zona + " " + nombre_municipio + "</td>";
+                            }                                        
+                            
+                            out = out + "<td style=\"text-align:left;\">" + nombre_escuela + " </td>";
+                            
+                            for(int m=0; m<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); m++) {
+                                out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPromedios_ua()[m]) + "</td>";
+                            }
+
+                            for(int m=0; m<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); m++) {
+                                out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPorcentajes_aciertos_ua()[m]) + "%</td>";
+                            }
+                                                                                    
+                            out = out + "</tr>";                        
+                            
+                        }                                                                         
+                                                
+                    }                            
+                                                
+                }                
+                
+                out = out + "</table>";
+                out = out + "<br /><br />";
+                
+                //cerramos renglón de tabla principal                
+                out = out + "</td>";
+                out = out + "</tr>";
+                
+                //Imprimimos gráfica por Escuela
+                if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                    for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                                 
+                        String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+
+                        for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                            String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                            String nombre_archivo_e = nombre_zona_escolar + "_" + nombre_municipio;
+                            
+                            //abrimos renglón de tabla principal
+                            out = out + "<tr>";
+                            out = out + "<td style=\"text-align:center; border:0;\">";
+
+                            String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + ".PNG\"";
+                            out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                            out = out + "<br /><br />";
+
+                            //cerramos renglón de tabla principal                
+                            out = out + "</td>";
+                            out = out + "</tr>"; 
+                        }
+                                                
+                    } 
+                } 
+            }
+            
+            //Por Turno
+            if(this.modelosExamenes.get(i).isPor_escuela()) {
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Turno (Puntaje y porcentarje promedio)</strong></h3>";
+                
+                out = out +
+                        "<table align=\"center\" width=\"500px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        + "<tr>";
+                    
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Escuela</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Turno</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Promedio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje</td>";
+                out = out + "</tr>";                
+                
+                out = out + "<tr>";                 
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+                
+                out = out + "</tr>";
+                
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {
+                    String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);                                        
+                                        
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                        boolean flag = true;
+                        String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                                                                                                
+                        out = out + "<tr>";
+                        
+                        for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                            String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                                        
+                            
+                            for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
+                                String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
+                                
+                                if(flag) {
+                                    int sum_turnos = 0;
+                                    for(Escuela e : this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas()) {
+                                        sum_turnos += e.getTurnos().size();
+                                    }
+                                    
+                                    int dif = (this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size() - sum_turnos);
+                                    int rowspan = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size() + Math.abs(dif);                                                                        
+                                    System.out.println("Rowspan " + rowspan + " " + Math.abs(dif));
+                                    out = out + "<td style=\"text-align:left;\" rowspan=\"" + rowspan + "\">Zona " + nombre_zona + " " + nombre_municipio + "</td>";
+                                    flag = false;
+                                }                                                                
+                                
+                                if(m!=0) {
+                                    out = out + "<tr>";
+                                } else {
+                                    out = out + "<td style=\"text-align:left;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size() + "\">" + nombre_escuela + "</td>";
+                                }                                                                   
+
+                                out = out + "<td style=\"text-align:left;\">" + nombre_turno + " </td>";
+                                
+                                for(int n=0; n<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); n++) {
+                                    out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPromedios_ua()[n]) + "</td>";
+                                }
+
+                                for(int n=0; n<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); n++) {
+                                    out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPorcentajes_aciertos_ua()[n]) + "%</td>";
+                                }
+                                                                                                
+                                out = out + "</tr>";                        
+                            }                                                        
+                            
+                        }                                                                         
+                                                
+                    }                            
+                                                
+                }                
+                
+                out = out + "</table>";
+                out = out + "<br /><br />";
+                
+                //cerramos renglón de tabla principal                
+                out = out + "</td>";
+                out = out + "</tr>";
+                
+                //Imprimimos gráfica por Turno
+                if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                    for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                                 
+                        String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+
+                        for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                            String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                            String nombre_archivo_e = nombre_zona_escolar + "_" + nombre_municipio;
+                            
+                            //abrimos renglón de tabla principal
+                            out = out + "<tr>";
+                            out = out + "<td style=\"text-align:center; border:0;\">";
+
+                            String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + "_turno.PNG\"";
+                            out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                            out = out + "<br /><br />";
+
+                            //cerramos renglón de tabla principal                
+                            out = out + "</td>";
+                            out = out + "</tr>"; 
+                        }
+                                                
+                    } 
+                } 
+            }
+            
+            //Por Grupo
+            if(this.modelosExamenes.get(i).isPor_grupo()) {
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Grupo (Puntaje y porcentarje promedio)</strong></h3>";
+                
+                out = out +
+                        "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        + "<tr>";
+                    
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Escuela</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Turno</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Grupo</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Promedio</td>";
+                out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje</td>";
+                out = out + "</tr>";   
+                
+                out = out + "<tr>";                 
+                
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+
+                for(int k=0; k<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); k++) {
+                    out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(k).getNombre() + "</td>";
+                }
+                
+                out = out + "</tr>";
+                
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {
+                    String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);                                        
+                                        
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                        boolean flag = true;
+                        String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                                                                                                
+                        out = out + "<tr>";
+                        
+                        for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                            String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                                        
+                            boolean flag1 = true;
+                            
+                            for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
+                                String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
+                                
+                                for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
+                                    String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();
+                                    
+                                    if(flag) {
+                                        int sum_grupos_zona = 0;
+                                        
+                                        int cont = 0;
+                                        for(Escuela e : this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas()) {
+                                            for(Turno t_e : this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(cont).getTurnos()) {
+                                                sum_grupos_zona += t_e.getGrupos().size();
+                                            }
+                                            
+                                            cont++;
+                                        }
+                                                                                                                        
+                                        out = out + "<td style=\"text-align:left;\" rowspan=\"" + sum_grupos_zona + "\">Zona " + nombre_zona + " " + nombre_municipio + "</td>";
+                                        flag = false;
+                                    }      
+                                    
+                                    if(flag1) {
+                                        int sum_grupos_escuela = 0;
+                                                                                    
+                                        for(Turno t_e : this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos()) {                                            
+                                            sum_grupos_escuela += t_e.getGrupos().size();                                            
+                                        }                                                                                                                         
+                                        
+                                        System.out.println("Rowspan1 " + sum_grupos_escuela);
+                                        out = out + "<td style=\"text-align:left;\" rowspan=\"" + sum_grupos_escuela + "\">" + nombre_escuela + "</td>";
+                                        flag1 = false;
+                                    }
+                                    
+                                    if(n!=0) {
+                                        out = out + "<tr>";
+                                    } else {
+                                        out = out + "<td style=\"text-align:left;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size() + "\">" + nombre_turno + " </td>";
+                                    }
+                                    
+                                    out = out + "<td style=\"text-align:center;\">" + nombre_grupo + " </td>";
+                                    
+                                    for(int o=0; o<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); o++) {
+                                        out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPromedios_ua()[o]) + "</td>";
+                                    }
+
+                                    for(int o=0; o<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); o++) {
+                                        out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPorcentajes_aciertos_ua()[o]) + "%</td>";
+                                    }
+                                                                                                            
+                                    out = out + "</tr>";
+                                }
+                                                                                        
+                            }                                                        
+                            
+                        }                                                                         
+                                                
+                    }                            
+                                                
+                }                
+                
+                out = out + "</table>";
+                out = out + "<br /><br />";
+                
+                //cerramos renglón de tabla principal                
+                out = out + "</td>";
+                out = out + "</tr>"; 
+                
+                //Imprimimos gráfica por Grupo
+                if(this.modelosExamenes.get(i).isDespliega_graficas()) {
+                    for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                                 
+                        String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+
+                        for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
+                            String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
+                            
+                            for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {                                        
+                                String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela(); 
+                                String nombre_archivo_e = nombre_zona_escolar + "_" + nombre_municipio + "_" + nombre_escuela;
+                                
+                                //abrimos renglón de tabla principal
+                                out = out + "<tr>";
+                                out = out + "<td style=\"text-align:center; border:0;\">";
+
+                                String nombreArchivo = "\"file:temp/res_generales/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + "_grupo.PNG\"";
+                                out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+                                out = out + "<br /><br />";
+
+                                //cerramos renglón de tabla principal                
+                                out = out + "</td>";
+                                out = out + "</tr>"; 
+                            }
+                                                        
+                        }
+                                                
+                    } 
+                } 
+            }
+            
+            //Por Sujeto
+            if(this.modelosExamenes.get(i).isPor_grupo()) {
+                //abrimos renglón de tabla principal
+                out = out + "<tr>";
+                out = out + "<td style=\"text-align:center; border:0;\">";
+                
+                out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Estudiante (Puntaje y porcentarje de aciertos)</strong></h3>";
+                                                                                                     
+                for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {
+                    String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);                                        
+                                        
+                    
+                    for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {                        
+                        String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                                                                                                                        
+                        
+                        for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
+                            String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                                                                    
+                            
+                            out = out +
+                                    "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
+                                    + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\"> Escuela: " + nombre_escuela + "<br />"
+                                    + "Zona Escolar: " + nombre_zona + "<br />"
+                                    + "Municipio: " + nombre_municipio
+                                    + "</caption>"
+                                    + "<tr>";
+                            
+                            out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Turno</td>";
+                            out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Grupo</td>";
+                            out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">No. de examen</td>";
+                            out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Puntaje</td>";
+                            out = out + "<td style=\"text-align:center; font-weight:bold;\" colspan=\"" + this.modelosExamenes.get(i).getUnidades_aprendizaje().size() + "\">Porcentaje</td>";
+                            out = out + "</tr>"; 
+                            
+                            out = out + "<tr>";                 
+                
+                            for(int z=0; z<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); z++) {
+                                out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(z).getNombre() + "</td>";
+                            }
+
+                            for(int z=0; z<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); z++) {
+                                out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getUnidades_aprendizaje().get(z).getNombre() + "</td>";
+                            }
+
+                            out = out + "</tr>";
+                            
+                            for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
+                                boolean flag1 = true;
+                                out = out + "<tr>";
+                                String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
+                                
+                                for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
+                                    String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();                                                                             
+                                    
+                                    for(int o=0; o<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().size(); o++) {
+                                        String id_alumno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().get(o).getId();                                                                             
+                                        
+                                        if(flag1) {
+                                            int sum_alumnos_turno = 0;
+
+                                            for(Grupo gr : this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos()) {                                            
+                                                sum_alumnos_turno += gr.getAlumnos().size();                                            
+                                            }                                                                                                                         
+                                            
+                                            out = out + "<td style=\"text-align:left;\" rowspan=\"" + sum_alumnos_turno + "\">" + nombre_turno + "</td>";
+                                            flag1 = false;
+                                        }
+
+                                        if(o!=0) {
+                                            out = out + "<tr>";
+                                        } else {
+                                            out = out + "<td style=\"text-align:center;\" rowspan=\"" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().size() + "\">" + nombre_grupo + " </td>";
+                                        }
+                                        
+                                        out = out + "<td style=\"text-align:left;\">" + id_alumno + " </td>";
+                                        
+                                        for(int p=0; p<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); p++) {
+                                            out = out + "<td style=\"text-align:center;\">" + this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().get(o).getPuntajes_ua()[p] + "</td>";
+                                        }
+
+                                        for(int p=0; p<this.modelosExamenes.get(i).getUnidades_aprendizaje().size(); p++) {
+                                            out = out + "<td style=\"text-align:center;\">" + df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getAlumnos().get(o).getPorcentajes_ua()[p]) + "%</td>";
+                                        }
+                                                                                                                        
+                                        out = out + "</tr>";
+                                    }
+                                                                        
+                                }
+                                                                                        
+                            }                                                        
+                            
+                            out = out + "</table>";
+                            out = out + "<br /><br />";
+                        }                                                                         
+                                                
+                    }                            
+                                                
+                }                                                
+                
+                //cerramos renglón de tabla principal                
+                out = out + "</td>";
+                out = out + "</tr>"; 
+            }
+            
+            out = out + "</table>";
+            out = out + "<br /><br />";
+                        
+        }                        
+        
+        this.panel_resultados.setText(out); 
+    }
+
+    private void reiniciarSeleccionAnalisis() {
+        for(ModeloExamen mo : this.modelosExamenes) {
+            mo.reiniciarSeleccionAnalisis();
+        }
     }
 }
