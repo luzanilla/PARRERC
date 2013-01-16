@@ -25,6 +25,15 @@ public class Escuela {
     private double[] frecuencia_ua;  
     private double[] promedios_ua;
     private double[] porcentajes_aciertos_ua;
+    private JFreeChart grafica_ua_tur;
+    
+    public JFreeChart getGrafica_ua_tur() {
+        return grafica_ua_tur;
+    }
+
+    public void setGrafica_ua_tur(JFreeChart grafica_ua_tur) {
+        this.grafica_ua_tur = grafica_ua_tur;
+    }
 
     public double[] getPuntaje_total_ua() {
         return puntaje_total_ua;

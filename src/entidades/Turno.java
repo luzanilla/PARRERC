@@ -5,6 +5,7 @@
 package entidades;
 
 import java.util.List;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -24,6 +25,15 @@ public class Turno {
     private double[] frecuencia_ua;  
     private double[] promedios_ua;
     private double[] porcentajes_aciertos_ua;
+    private JFreeChart grafica_ua_grupos;
+
+    public JFreeChart getGrafica_ua_grupos() {
+        return grafica_ua_grupos;
+    }
+
+    public void setGrafica_ua_grupos(JFreeChart grafica_ua_grupos) {
+        this.grafica_ua_grupos = grafica_ua_grupos;
+    }
 
     public double[] getPuntaje_total_ua() {
         return puntaje_total_ua;

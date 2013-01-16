@@ -25,7 +25,16 @@ public class ZonaEscolar {
     private double[] frecuencia_ua;  
     private double[] promedios_ua;
     private double[] porcentajes_aciertos_ua;
+    private JFreeChart grafica_ua_zona;    
 
+    public JFreeChart getGrafica_ua_zona() {
+        return grafica_ua_zona;
+    }
+
+    public void setGrafica_ua_zona(JFreeChart grafica_ua_zona) {
+        this.grafica_ua_zona = grafica_ua_zona;
+    }
+    
     public double[] getPuntaje_total_ua() {
         return puntaje_total_ua;
     }

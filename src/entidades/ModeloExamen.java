@@ -87,6 +87,26 @@ public class ModeloExamen {
     //private JFreeChart grafica_rg_municipio;
     //private List<JFreeChart> graficas_rg_zona_escolar;
     
+    //Variables de resultados por unidad de aprendizaje
+    private JFreeChart grafica_ua_municipio;
+    private List<JFreeChart> graficas_ua_zona_escolar;
+
+    public List<JFreeChart> getGraficas_ua_zona_escolar() {
+        return graficas_ua_zona_escolar;
+    }
+
+    public void setGraficas_ua_zona_escolar(List<JFreeChart> graficas_ua_zona_escolar) {
+        this.graficas_ua_zona_escolar = graficas_ua_zona_escolar;
+    }
+
+    public JFreeChart getGrafica_ua_municipio() {
+        return grafica_ua_municipio;
+    }
+
+    public void setGrafica_ua_municipio(JFreeChart grafica_ua_municipio) {
+        this.grafica_ua_municipio = grafica_ua_municipio;
+    }
+    
     public double[][] getPromedio_municipio_ua() {
         return promedio_municipio_ua;
     }
@@ -534,6 +554,18 @@ public class ModeloExamen {
     
     public int getIndiceItem(String var) {
         return this.vars_items.indexOf(var);
+    }
+    
+    public int getMaxSizeUA() {
+        int max = 0;
+        
+        for(UnidadAprendizaje ua : this.unidades_aprendizaje) {
+            if(ua.getItems().size()>max) {
+                max = ua.getItems().size();
+            }
+        }
+        
+        return max;
     }
        
 }
