@@ -208,51 +208,47 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
     private void calcularPorZonaEscolar(int indice_modelo) {
         //Si eligió la opción por municipio calculamos las zonas escolares por municipio
         if(this.modelosExamenes.get(indice_modelo).isPor_municipio()) {
-            zona_escolar_por_municipio = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio();
-            double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
-            double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
-            double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
-            double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
-            
-            int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
-            int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());
-            
-            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {                
-                String municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_municipio);
-                String zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuesta(indice_zona_escolar);                
+            for(int i=0; i<this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size(); i++) {
+                String municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i);   
                 
-                int indice_opcion_municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().indexOf(municipio);                
-                
-                List<ZonaEscolar> zonas_temp;
-                zonas_temp = zona_escolar_por_municipio[indice_opcion_municipio];                                  
-                
-                boolean flag = false;
-                int j=0;
-                
-                for(j=0; j<zonas_temp.size(); j++) {
-                    if(zonas_temp.get(j).getNombre_zona_escolar().equalsIgnoreCase(zona_escolar)) {                        
-                        
-                        for(int k=0; k<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); k++) {  
-                            frecuencia_ua[k]++;                            
-                            puntaje_total_ua[k] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getPuntajes_ua()[k];
-                            
-                            puntaje_promedio_ua[k] = puntaje_total_ua[k]/frecuencia_ua[k];
-                            porcentaje_ua[k] = (puntaje_promedio_ua[k]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(k).getItems().size())*100;
-                        }                                                
-                        
-                        zonas_temp.get(j).setPuntaje_total_ua(puntaje_total_ua);
-                        zonas_temp.get(j).setFrecuencia_ua(frecuencia_ua);
-                        zonas_temp.get(j).setPromedios_ua(puntaje_promedio_ua);
-                        zonas_temp.get(j).setPorcentajes_aciertos_ua(porcentaje_ua);
-                                                
-                        break;
+                    
+                for(int j=0; j<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].size(); j++) {
+                    double[] puntaje_total_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                    double[] frecuencia_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                    double[] puntaje_promedio_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                    double[] porcentaje_ua = new double[this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size()];
+                    //zona_escolar_por_municipio = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio();                    
+                    
+                    ZonaEscolar zona = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j);
+                    String nombre_zona_escolar = zona.getNombre_zona_escolar();                    
+                    
+                    for(int k=0; k<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); k++) {                        
+                        int indice_municipio = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarMunicipio());
+                        int indice_zona_escolar = this.modelosExamenes.get(indice_modelo).getIndiceVar(this.modelosExamenes.get(indice_modelo).getVarZonaEscolar());                        
+                        String res_municipio = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_municipio);
+                        String res_zona_escolar = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getRespuesta(indice_zona_escolar);
+
+                        if(municipio.equalsIgnoreCase(res_municipio) && nombre_zona_escolar.equalsIgnoreCase(res_zona_escolar)) {                                    
+
+                            for(int m=0; m<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); m++) {                                              
+                                frecuencia_ua[m]++;                            
+                                puntaje_total_ua[m] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(k).getPuntajes_ua()[m];
+
+                                puntaje_promedio_ua[m] = puntaje_total_ua[m]/frecuencia_ua[m];
+                                porcentaje_ua[m] = (puntaje_promedio_ua[m]/this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(m).getItems().size())*100;                                                                                
+                            }
+
+                        }
                     }
-                }                                                                                
+                    
+                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).setPuntaje_total_ua(puntaje_total_ua);
+                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).setFrecuencia_ua(frecuencia_ua);
+                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).setPromedios_ua(puntaje_promedio_ua);
+                    this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).setPorcentajes_aciertos_ua(porcentaje_ua);
+                }                                
                 
-                zona_escolar_por_municipio[indice_opcion_municipio] = zonas_temp;
-                this.modelosExamenes.get(indice_modelo).setZona_escolar_por_municipio(zona_escolar_por_municipio);
             }
-            
+                                                           
         }
                 
     }
@@ -463,7 +459,8 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         }
     }
        
-    private void crearGraficas(int i) {        
+    private void crearGraficas(int i) { 
+        DecimalFormat df = new DecimalFormat("0.0");        
         
         if(this.modelosExamenes.get(i).isPor_municipio()) {
             
@@ -475,8 +472,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         
                 for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                 
                     String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
+                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getPromedio_municipio_ua()[j][z]));
 
-                    dataset.setValue(this.modelosExamenes.get(i).getPromedio_municipio_ua()[j][z], nombre_municipio, nombre_ua);
+                    dataset.setValue(valor, nombre_municipio, nombre_ua);
                 }
             } 
             
@@ -525,7 +523,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     
                     for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
                         String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
-                        dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPromedios_ua()[z], nombre_zona, nombre_ua);
+                        double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPromedios_ua()[z]));
+                        
+                        dataset.setValue(valor, nombre_zona, nombre_ua);
                     }
                 }                                
                 
@@ -578,8 +578,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         
                         for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
                             String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
+                            double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPromedios_ua()[z]));
                             
-                            dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPromedios_ua()[z], nombre_escuela, nombre_ua);
+                            dataset.setValue(valor, nombre_escuela, nombre_ua);
                         }
                     }                                        
                                         
@@ -634,8 +635,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             
                             for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
                                 String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
-
-                                dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPromedios_ua()[m], nombre_turno, nombre_ua);
+                                double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPromedios_ua()[m]));
+                                
+                                dataset.setValue(valor, nombre_turno, nombre_ua);
                             }
                         }                                                
                         
@@ -698,7 +700,9 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                 
                                 for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
                                     String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();
-                                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPromedios_ua()[z], nombre_grupo, nombre_ua);
+                                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPromedios_ua()[z]));
+                                    
+                                    dataset.setValue(valor, nombre_grupo, nombre_ua);
                                 }
                             }                            
                                         
@@ -1266,7 +1270,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Grupo (Puntaje y porcentarje promedio)</strong></h3>";
                 
                 out = out +
-                        "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        "<table align=\"center\" width=\"550px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
                         + "<tr>";
                     
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
