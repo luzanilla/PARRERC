@@ -298,7 +298,7 @@ public class Parrerc extends javax.swing.JFrame {
     }//GEN-LAST:event_miResultadosGeneralesActionPerformed
 
     private void miReporteEstudiantesYPadresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteEstudiantesYPadresActionPerformed
-        infAlumnnos = new InformePadresAlumnos();
+        infAlumnnos = new InformePadresAlumnos(cd.getModelosExamenes(), this.jDesktopPane1);
         this.jDesktopPane1.add(infAlumnnos);
         this.jDesktopPane1.setSelectedFrame(infAlumnnos);
     }//GEN-LAST:event_miReporteEstudiantesYPadresActionPerformed
