@@ -31,7 +31,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
     private List<ModeloExamen> modelosExamenes;
     private Alumno alumno;
     private int indice_modelo;        
-    
+    private double media_grupo;
     /**
      * Creates new form InformePadresAlumnos
      */
@@ -257,8 +257,36 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                     + "<th scope=\"col\">Informe de resultados para alumnos y padres de familia.</th>"
                 + "  </tr>";
         out = out + "<tr>"
-                    + "<td>El estudiante con el examen " + this.alumno.getId() + " aplic&oacute; el modelo de examen " + this.alumno.getModelo() + " que tenía " + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + " &iacute;tems." + this.getTextoUA() + "</td>"
+                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El total de aciertos obtenidos en todo el examen fue de " + this.alumno.getAciertos() + ", " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "</td>"
                   + "</tr>";
+        out = out + "<tr>"
+                    + "<td>"
+                    + "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                        + "<tr>"
+                            + "<th width=\"35%\" rowspan=\"2\" scope=\"col\">No. exmanen</th>"
+                            + "<th width=\"16%\" scope=\"col\">Total de aciertos</th>"
+                            + "<th scope=\"col\" colspan=\"" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size() + "\">Unidades de aprendizaje</th>"
+                        + "</tr>"
+                        + "<tr>"
+                            + "<th width=\"13%\" scope=\"col\">General</th>";
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            out = out + "<th scope=\"col\">" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(i).getNombre() + "</th>";
+        }
+        
+        out = out + "</tr>";
+        
+        out = out + "<tr>";
+        out = out + "<td>" + alumno.getId() + "</td>";
+        out = out + "<td>" + alumno.getAciertos() + "</td>";
+        
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            out = out + "<td>" + alumno.getPuntajes_ua()[i] + "</td>";
+        }
+        
+        out = out + "</tr>";
+        out = out + "</table>";
+        out = out + "</td>";
+        out = out + "</tr>";                        
         out = out + "</table>";
         
         this.panel_resultados.setText(out); 
@@ -289,6 +317,90 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         }
         
         return text;        
+    }
+
+    private String getTextoMediaGrupo() {
+        String text = "";
+        
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().size(); i++) {
+            String municipio = this.modelosExamenes.get(indice_modelo).getOpciones_respuesta_municipio().get(i);
+            
+            if(municipio.equalsIgnoreCase(alumno.getMunicipio())) {
+                
+                for(int j=0; j<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].size(); j++) {
+                    String zona = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getNombre_zona_escolar();
+                    
+                    if(zona.equalsIgnoreCase(alumno.getZona_escolar())) {
+                        
+                        for(int k=0; k<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().size(); k++) {
+                            String escuela = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getId_escuela();
+                            
+                            if(escuela.equalsIgnoreCase(alumno.getEscuela())) {
+                                
+                                for(int l=0; l<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().size(); l++) {
+                                    String turno = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getId_turno();
+                                    
+                                    if(turno.equalsIgnoreCase(alumno.getTurno())) {
+                                        
+                                        for(int m=0; m<this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().size(); m++) {
+                                            String grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m).getId_grupo();
+                                            
+                                            if(grupo.equalsIgnoreCase(alumno.getGrupo())) {
+                                                this.media_grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m).getPuntaje_promedio_grupo();
+                                                double dif = this.media_grupo - alumno.getAciertos();
+                                                
+                                                if(Math.abs(dif)<=1) {
+                                                    text = text + "dentro del promedio del grupo general.";
+                                                } else {
+                                                    if(dif>1) {
+                                                        text = text + "por debajo del promedio del grupo general.";
+                                                    } else {
+                                                        if(dif<-1) {
+                                                            text = text + "por encima del promedio del grupo general.";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        return text;
+    }
+
+    private String getTextoMinMaxUA() {
+        String text = "";
+        String min_ua = "";
+        String max_ua = "";
+        int indice_min = 0;
+        int indice_max = 0;
+        
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            if(i==0) {
+                indice_min = 0;
+                indice_max = 0;
+            } else {
+                if(alumno.getPorcentajes_ua()[i]<alumno.getPorcentajes_ua()[indice_min]) {
+                    indice_min = i;
+                }
+                
+                if(alumno.getPorcentajes_ua()[i]>alumno.getPorcentajes_ua()[indice_max]) {
+                    indice_max = i;
+                }
+            }
+        }
+        
+        if(indice_min!=indice_max) {
+            text = text + "En la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_max).getNombre() + "</strong> obtuvo el mayor porcentaje de aciertos y en la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_min).getNombre() + "</strong> obtuvo el menor menor poorcentaje de aciertos.";
+        }
+        
+        return text;
     }
     
 }
