@@ -20,6 +20,7 @@ public class Parrerc extends javax.swing.JFrame {
     private ResultadosPorUnidadAprendizaje resPorUnidad;
     private ResultadosGenerales resGenerales;
     private InformePadresAlumnos infAlumnnos;
+    private InformeDocentes infDocentes;
 
     /**
      * Creates new form Parrerc
@@ -193,6 +194,11 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteEstudiantesYPadres);
 
         miReporteDocentes.setText("Reporte para el docente");
+        miReporteDocentes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miReporteDocentesActionPerformed(evt);
+            }
+        });
         menuReporteResultados.add(miReporteDocentes);
 
         miReporteDirectores.setText("Reporte para el director");
@@ -302,6 +308,12 @@ public class Parrerc extends javax.swing.JFrame {
         this.jDesktopPane1.add(infAlumnnos);
         this.jDesktopPane1.setSelectedFrame(infAlumnnos);
     }//GEN-LAST:event_miReporteEstudiantesYPadresActionPerformed
+
+    private void miReporteDocentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteDocentesActionPerformed
+        infDocentes = new InformeDocentes(cd.getModelosExamenes(), this.jDesktopPane1);       
+        this.jDesktopPane1.add(infDocentes);
+        this.jDesktopPane1.setSelectedFrame(infDocentes);
+    }//GEN-LAST:event_miReporteDocentesActionPerformed
 
     /**
      * @param args the command line arguments

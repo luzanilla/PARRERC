@@ -257,7 +257,10 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         
         this.jDialog1.dispose();
         
-        guardarImagenes();
+        if(this.mostrar_graficas.isSelected()) {
+            guardarImagenes();
+        }
+        
         pintar_resultados();
         
         this.setVisible(true);

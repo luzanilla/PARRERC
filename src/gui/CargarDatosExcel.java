@@ -952,7 +952,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                         case Cell.CELL_TYPE_NUMERIC:
                             if (cell.getNumericCellValue() != 0) {
                                 //System.out.println(i + " " + Double.toString(cell.getNumericCellValue()));
-                                clavesRespuesta.add(Double.toString(cell.getNumericCellValue()));
+                                clavesRespuesta.add(Integer.toString((int) cell.getNumericCellValue()));
                             } else {
                                 System.out.println("VACIO N");
                             }
@@ -1101,7 +1101,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             case Cell.CELL_TYPE_NUMERIC:
                 if (celda.getNumericCellValue() != 0) {
                     //System.out.println(Double.toString(celda.getNumericCellValue()));
-                    valor = Double.toString(celda.getNumericCellValue());
+                    valor = Integer.toString((int) celda.getNumericCellValue());
                 } else {
                     //System.out.println("");
                     valor = ".";

@@ -5,9 +5,11 @@
 package gui;
 
 import entidades.Alumno;
+import entidades.Grupo;
 import entidades.ModeloExamen;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +34,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
     private Alumno alumno;
     private int indice_modelo;        
     private double media_grupo;
+    private Grupo grupo;
     /**
      * Creates new form InformePadresAlumnos
      */
@@ -69,7 +72,6 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         jDialog1.setTitle("Informe de resultados para alumnos y padres de familia");
         jDialog1.setBounds(new java.awt.Rectangle(0, 0, 460, 410));
         jDialog1.setModal(true);
-        jDialog1.setPreferredSize(new java.awt.Dimension(424, 440));
         jDialog1.setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
@@ -168,6 +170,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
         setResizable(true);
@@ -184,7 +187,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
         );
 
         pack();
@@ -252,23 +255,27 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
     }
 
     private void pintarResultados() {
-        String out = "<table width=\"50%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";
+        DecimalFormat df = new DecimalFormat("0.000");
+        
+        String out = "<table align\"center\" width=\"60%\" border=\"0\" cellspacing=\"10px\" cellpadding=\"0\">";
         out = out + "<tr>"
-                    + "<th scope=\"col\">Informe de resultados para alumnos y padres de familia.</th>"
+                    + "<th scope=\"col\"><h2>Informe de resultados para alumnos y padres de familia.</h2></th>"
                 + "  </tr>";
         out = out + "<tr>"
-                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El total de aciertos obtenidos en todo el examen fue de " + this.alumno.getAciertos() + ", " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "</td>"
+                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El total de aciertos obtenidos en todo el examen fue de <strong>" + this.alumno.getAciertos() + "</strong>, " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "<br /></td>"
                   + "</tr>";
+        
+        //Tabla con datos del sujeto
         out = out + "<tr>"
                     + "<td>"
-                    + "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
-                            + "<th width=\"35%\" rowspan=\"2\" scope=\"col\">No. exmanen</th>"
+                            + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">No. exmanen</th>"
                             + "<th width=\"16%\" scope=\"col\">Total de aciertos</th>"
                             + "<th scope=\"col\" colspan=\"" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size() + "\">Unidades de aprendizaje</th>"
                         + "</tr>"
                         + "<tr>"
-                            + "<th width=\"13%\" scope=\"col\">General</th>";
+                            + "<th scope=\"col\">General</th>";
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
             out = out + "<th scope=\"col\">" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(i).getNombre() + "</th>";
         }
@@ -276,17 +283,64 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         out = out + "</tr>";
         
         out = out + "<tr>";
-        out = out + "<td>" + alumno.getId() + "</td>";
-        out = out + "<td>" + alumno.getAciertos() + "</td>";
+        out = out + "<td align=\"center\">" + alumno.getId() + "</td>";
+        out = out + "<td align=\"center\">" + alumno.getAciertos() + "</td>";
         
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
-            out = out + "<td>" + alumno.getPuntajes_ua()[i] + "</td>";
+            out = out + "<td align=\"center\">" + alumno.getPuntajes_ua()[i] + "</td>";
         }
         
         out = out + "</tr>";
         out = out + "</table>";
         out = out + "</td>";
-        out = out + "</tr>";                        
+        out = out + "</tr>";  
+        
+        //Tabla con datos del grupo
+        out = out + "<tr>"
+                    + "<td>"
+                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                        + "<tr>"
+                            + "<th width=\"16%\" scope=\"row\">Promedio del grupo</th>"
+                            + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.media_grupo) + "</td>";
+                            
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            out = out + "<td scope=\"col\" align=\"center\">" + df.format(this.grupo.getPromedios_ua()[i]) + "</td>";
+        }
+        
+        out = out + "</tr>";                
+        out = out + "</table>";
+        out = out + "</td>";
+        out = out + "</tr>";
+        
+        //Tabla con datos del examen
+        out = out + "<tr>"
+                    + "<td>"
+                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                        + "<tr>"
+                            + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">&nbsp;</th>"
+                            + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">General</th>"
+                            + "<th scope=\"col\" colspan=\"" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size() + "\">Unidades de aprendizaje</th>"
+                        + "</tr>"
+                        + "<tr>";
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            out = out + "<th scope=\"col\">" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(i).getNombre() + "</th>";
+        }
+        
+        out = out + "</tr>";
+        
+        out = out + "<tr>";
+        out = out + "<td>N&uacute;mero de &iacute;ems</td>";
+        out = out + "<td align=\"center\">" + this.modelosExamenes.get(indice_modelo).getNumero_de_items() + "</td>";
+        
+        for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
+            out = out + "<td align=\"center\">" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(i).getItems().size() + "</td>";
+        }
+        
+        out = out + "</tr>";
+        out = out + "</table>";
+        out = out + "</td>";
+        out = out + "</tr>";
+        
         out = out + "</table>";
         
         this.panel_resultados.setText(out); 
@@ -347,6 +401,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                                             
                                             if(grupo.equalsIgnoreCase(alumno.getGrupo())) {
                                                 this.media_grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m).getPuntaje_promedio_grupo();
+                                                this.grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m);
                                                 double dif = this.media_grupo - alumno.getAciertos();
                                                 
                                                 if(Math.abs(dif)<=1) {
@@ -397,7 +452,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         }
         
         if(indice_min!=indice_max) {
-            text = text + "En la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_max).getNombre() + "</strong> obtuvo el mayor porcentaje de aciertos y en la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_min).getNombre() + "</strong> obtuvo el menor menor poorcentaje de aciertos.";
+            text = text + "En la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_max).getNombre() + "</strong> obtuvo el mayor porcentaje de aciertos y en la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_min).getNombre() + "</strong> obtuvo el menor poorcentaje de aciertos.";
         }
         
         return text;
