@@ -176,6 +176,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         setResizable(true);
         setTitle("Informe de resultados para alumnos y padres de familia");
 
+        panel_resultados.setEditable(false);
         panel_resultados.setContentType("text/html");
         jScrollPane1.setViewportView(panel_resultados);
 
@@ -187,7 +188,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
         );
 
         pack();
