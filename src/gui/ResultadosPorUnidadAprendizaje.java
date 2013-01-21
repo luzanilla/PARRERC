@@ -472,13 +472,13 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         
                 for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {                 
                     String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
-                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getPromedio_municipio_ua()[j][z]));
+                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getPorcentaje_aciertos_municipio_ua()[j][z]));
 
                     dataset.setValue(valor, nombre_municipio, nombre_ua);
                 }
             } 
             
-            JFreeChart chart = ChartFactory.createBarChart("Puntaje promedio por Municipio", "Unidades de aprendizaje", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+            JFreeChart chart = ChartFactory.createBarChart("Porcentaje de aciertos por Municipio", "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
 
             chart.setBackgroundPaint(Color.white);
 
@@ -490,7 +490,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
             plot.setDomainGridlinePaint(Color.darkGray);            
 
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-            rangeAxis.setUpperBound((this.modelosExamenes.get(i).getMaxSizeUA()+5));
+            rangeAxis.setUpperBound(100);
 
             // customise the renderer...
             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -523,13 +523,13 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     
                     for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
                         String nombre_zona = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();
-                        double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPromedios_ua()[z]));
+                        double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPorcentajes_aciertos_ua()[z]));
                         
                         dataset.setValue(valor, nombre_zona, nombre_ua);
                     }
                 }                                
                 
-                JFreeChart chart = ChartFactory.createBarChart(nombre_municipio + " por zona escolar", "Unidades de aprendizaje", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                JFreeChart chart = ChartFactory.createBarChart(nombre_municipio + " por zona escolar", "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
             
                 chart.setBackgroundPaint(Color.white);
 
@@ -541,7 +541,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 plot.setDomainGridlinePaint(Color.darkGray);            
 
                 final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                rangeAxis.setUpperBound((this.modelosExamenes.get(i).getMaxSizeUA()+5));
+                rangeAxis.setUpperBound(100);
 
                 // customise the renderer...
                 final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -578,14 +578,14 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         
                         for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
                             String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
-                            double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPromedios_ua()[z]));
+                            double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPorcentajes_aciertos_ua()[z]));
                             
                             dataset.setValue(valor, nombre_escuela, nombre_ua);
                         }
                     }                                        
                                         
                     String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
-                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
             
                     chart.setBackgroundPaint(Color.white);
 
@@ -597,7 +597,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     plot.setDomainGridlinePaint(Color.darkGray);            
 
                     final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                    rangeAxis.setUpperBound((this.modelosExamenes.get(i).getMaxSizeUA()+5));
+                    rangeAxis.setUpperBound(100);
 
                     // customise the renderer...
                     final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -635,14 +635,14 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             
                             for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
                                 String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
-                                double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPromedios_ua()[m]));
+                                double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPorcentajes_aciertos_ua()[m]));
                                 
                                 dataset.setValue(valor, nombre_turno, nombre_ua);
                             }
                         }                                                
                         
                         String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio + ", Escuela " + nombre_escuela;
-                        JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                        JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         chart.setBackgroundPaint(Color.white);
 
@@ -654,7 +654,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         plot.setDomainGridlinePaint(Color.darkGray);            
 
                         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                        rangeAxis.setUpperBound((this.modelosExamenes.get(i).getMaxSizeUA()+5));
+                        rangeAxis.setUpperBound(100);
 
                         // customise the renderer...
                         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -700,14 +700,14 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                 
                                 for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
                                     String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();
-                                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPromedios_ua()[z]));
+                                    double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPorcentajes_aciertos_ua()[z]));
                                     
                                     dataset.setValue(valor, nombre_grupo, nombre_ua);
                                 }
                             }                            
                                         
                             String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio + ", Escuela " + nombre_escuela + ", Turno " + nombre_turno;
-                            JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                            JFreeChart chart = ChartFactory.createBarChart(titulo, "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
                             chart.setBackgroundPaint(Color.white);
 
                             final CategoryPlot plot = (CategoryPlot) chart.getPlot();
@@ -718,7 +718,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             plot.setDomainGridlinePaint(Color.darkGray);            
 
                             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                            rangeAxis.setUpperBound((this.modelosExamenes.get(i).getMaxSizeUA()+5));
+                            rangeAxis.setUpperBound(100);
 
                             // customise the renderer...
                             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        

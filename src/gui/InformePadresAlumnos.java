@@ -273,7 +273,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                     + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
                             + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">No. exmanen</th>"
-                            + "<th width=\"16%\" scope=\"col\">Total de aciertos</th>"
+                            + "<th width=\"16%\" scope=\"col\">Porcentaje de aciertos</th>"
                             + "<th scope=\"col\" colspan=\"" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size() + "\">Unidades de aprendizaje</th>"
                         + "</tr>"
                         + "<tr>"
@@ -286,10 +286,10 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         
         out = out + "<tr>";
         out = out + "<td align=\"center\">" + alumno.getId() + "</td>";
-        out = out + "<td align=\"center\">" + df.format(alumno.getPorcentaje_aciertos()) + "</td>";
+        out = out + "<td align=\"center\">" + df.format(alumno.getPorcentaje_aciertos()) + "%</td>";
         
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
-            out = out + "<td align=\"center\">" + df.format(alumno.getPorcentajes_ua()[i]) + "</td>";
+            out = out + "<td align=\"center\">" + df.format(alumno.getPorcentajes_ua()[i]) + "%</td>";
         }
         
         out = out + "</tr>";
@@ -302,11 +302,11 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                     + "<td>"
                     + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
-                            + "<th width=\"16%\" scope=\"row\">Promedio del grupo</th>"
-                            + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.porcentaje_grupo) + "</td>";
+                            + "<th width=\"16%\" scope=\"row\">Porcentaje del grupo</th>"
+                            + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.porcentaje_grupo) + "%</td>";
                             
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
-            out = out + "<td scope=\"col\" align=\"center\">" + df.format(this.grupo.getPorcentajes_aciertos_ua()[i]) + "</td>";
+            out = out + "<td scope=\"col\" align=\"center\">" + df.format(this.grupo.getPorcentajes_aciertos_ua()[i]) + "%</td>";
         }
         
         out = out + "</tr>";                
@@ -331,7 +331,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         out = out + "</tr>";
         
         out = out + "<tr>";
-        out = out + "<td>N&uacute;mero de &iacute;ems</td>";
+        out = out + "<td>N&uacute;mero de &iacute;tems</td>";
         out = out + "<td align=\"center\">" + this.modelosExamenes.get(indice_modelo).getNumero_de_items() + "</td>";
         
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {

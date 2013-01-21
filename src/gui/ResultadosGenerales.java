@@ -462,10 +462,10 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             DefaultCategoryDataset dataset = new DefaultCategoryDataset();
             
             for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
-                dataset.setValue(this.modelosExamenes.get(i).getPuntaje_promedio_municipio().get(j), "Promedio", this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j));           
+                dataset.setValue((this.modelosExamenes.get(i).getPorcentaje_aciertos_municipio().get(j)*100), "Porcentaje", this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j));           
             }
             
-            JFreeChart chart = ChartFactory.createBarChart("Puntaje promedio por Municipio", "Municipio", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+            JFreeChart chart = ChartFactory.createBarChart("Porcentaje de aciertos por Municipio", "Municipio", "Porcentaje", dataset, PlotOrientation.VERTICAL, false, true, true);
             
             chart.setBackgroundPaint(Color.white);
 
@@ -477,7 +477,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             plot.setDomainGridlinePaint(Color.darkGray);            
             
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-            rangeAxis.setUpperBound((100));
+            rangeAxis.setUpperBound(105);
             
             // customise the renderer...
             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -502,10 +502,10 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                 String nombre_municipio = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
                 
                 for(int k=0; k<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].size(); k++) {
-                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPuntaje_promedio_zona_escolar(), "Promedio", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar());
+                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getPorcentaje_aciertos_zona_escolar(), "Porcentaje", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar());
                 }                
                 
-                JFreeChart chart = ChartFactory.createBarChart(nombre_municipio, "Zona escolar", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+                JFreeChart chart = ChartFactory.createBarChart(nombre_municipio, "Zona escolar", "Porcentaje", dataset, PlotOrientation.VERTICAL, false, true, true);
             
                 chart.setBackgroundPaint(Color.white);
 
@@ -517,7 +517,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                 plot.setDomainGridlinePaint(Color.darkGray);            
 
                 final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+                rangeAxis.setUpperBound(105);
 
                 // customise the renderer...
                 final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -548,11 +548,11 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                     
                     for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {
                         String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();
-                        dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPuntaje_promedio_escuela(), "Promedio", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela());
+                        dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getPorcentaje_aciertos_escuela(), "Porcentaje", this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela());
                     }
                                         
                     String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
-                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, false, true, true);
+                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Porcentaje", dataset, PlotOrientation.VERTICAL, false, true, true);
             
                     chart.setBackgroundPaint(Color.white);
 
@@ -564,7 +564,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                     plot.setDomainGridlinePaint(Color.darkGray);            
 
                     final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                    rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+                    rangeAxis.setUpperBound(105);
 
                     // customise the renderer...
                     final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -597,13 +597,13 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                         for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
                             String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
                             
-                            dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPuntaje_promedio_turno(), nombre_turno, nombre_escuela);
+                            dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPorcentaje_aciertos_turno(), nombre_turno, nombre_escuela);
                         }
                                                                         
                     }
                                         
                     String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio;
-                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                    JFreeChart chart = ChartFactory.createBarChart(titulo, "Escuela", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
             
                     chart.setBackgroundPaint(Color.white);
 
@@ -615,7 +615,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                     plot.setDomainGridlinePaint(Color.darkGray);            
 
                     final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                    rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+                    rangeAxis.setUpperBound(105);
 
                     // customise the renderer...
                     final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
@@ -657,13 +657,13 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                             
                             for(int n=0; n<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().size(); n++) {
                                     String nombre_grupo = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getId_grupo();
-                                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPuntaje_promedio_grupo(), nombre_turno, nombre_grupo);
+                                    dataset.setValue(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrupos().get(n).getPorcentaje_aciertos_grupo(), nombre_turno, nombre_grupo);
                             }
                                                         
                         }
                                         
                         String titulo = "Zona " + nombre_zona_escolar + ", " + nombre_municipio + ", Escuela " + nombre_escuela;
-                        JFreeChart chart = ChartFactory.createBarChart(titulo, "Grupo", "Promedio", dataset, PlotOrientation.VERTICAL, true, true, true);
+                        JFreeChart chart = ChartFactory.createBarChart(titulo, "Grupo", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
 
                         chart.setBackgroundPaint(Color.white);
 
@@ -675,7 +675,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                         plot.setDomainGridlinePaint(Color.darkGray);            
 
                         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                        rangeAxis.setUpperBound((this.modelosExamenes.get(i).getNumero_de_items()));
+                        rangeAxis.setUpperBound(105);
 
                         // customise the renderer...
                         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
