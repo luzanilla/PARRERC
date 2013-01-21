@@ -149,7 +149,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 for(int k=0; k<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(j).getItems().size(); k++) {
                     String item = this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(j).getItems().get(k);
                     int indice_item = this.modelosExamenes.get(indice_modelo).getIndiceItem(item);
-                    
+                    System.out.println("HOLA :" + item + " - " + indice_item);
                     puntajes_ua[j] += this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(i).getRespuestaCalificada(indice_item);
                 }
                 

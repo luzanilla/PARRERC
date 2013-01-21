@@ -21,6 +21,7 @@ public class Parrerc extends javax.swing.JFrame {
     private ResultadosGenerales resGenerales;
     private InformePadresAlumnos infAlumnnos;
     private InformeDocentes infDocentes;
+    private InformeDirectores infDirectores;
 
     /**
      * Creates new form Parrerc
@@ -79,7 +80,7 @@ public class Parrerc extends javax.swing.JFrame {
         fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos de Excel (.xls, xlsx)", "xls", "xlsx"));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Programa para el análisis y reporte de resultados de exámenes de referencia criterial");
+        setTitle("Programa de Análisis y Reportes de Examenes Criteriales.");
 
         menuArchivo.setText("Archivo");
 
@@ -202,6 +203,11 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteDocentes);
 
         miReporteDirectores.setText("Reporte para el director");
+        miReporteDirectores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miReporteDirectoresActionPerformed(evt);
+            }
+        });
         menuReporteResultados.add(miReporteDirectores);
 
         miReporteInspectores.setText("Reporte para el inspector");
@@ -314,6 +320,12 @@ public class Parrerc extends javax.swing.JFrame {
         this.jDesktopPane1.add(infDocentes);
         this.jDesktopPane1.setSelectedFrame(infDocentes);
     }//GEN-LAST:event_miReporteDocentesActionPerformed
+
+    private void miReporteDirectoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteDirectoresActionPerformed
+        infDirectores = new InformeDirectores(cd.getModelosExamenes(), this.jDesktopPane1);       
+        this.jDesktopPane1.add(infDirectores);
+        this.jDesktopPane1.setSelectedFrame(infDirectores);
+    }//GEN-LAST:event_miReporteDirectoresActionPerformed
 
     /**
      * @param args the command line arguments

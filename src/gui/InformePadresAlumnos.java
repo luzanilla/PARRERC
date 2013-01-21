@@ -34,6 +34,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
     private Alumno alumno;
     private int indice_modelo;        
     private double media_grupo;
+    private double porcentaje_grupo;
     private Grupo grupo;
     /**
      * Creates new form InformePadresAlumnos
@@ -263,7 +264,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                     + "<th scope=\"col\"><h2>Informe de resultados para alumnos y padres de familia.</h2></th>"
                 + "  </tr>";
         out = out + "<tr>"
-                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El total de aciertos obtenidos en todo el examen fue de <strong>" + this.alumno.getAciertos() + "</strong>, " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "<br /></td>"
+                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El porcentaje de aciertos obtenidos en todo el examen fue de <strong>" + df.format(this.alumno.getPorcentaje_aciertos()) + "%</strong>, " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "<br /></td>"
                   + "</tr>";
         
         //Tabla con datos del sujeto
@@ -285,10 +286,10 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         
         out = out + "<tr>";
         out = out + "<td align=\"center\">" + alumno.getId() + "</td>";
-        out = out + "<td align=\"center\">" + alumno.getAciertos() + "</td>";
+        out = out + "<td align=\"center\">" + df.format(alumno.getPorcentaje_aciertos()) + "</td>";
         
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
-            out = out + "<td align=\"center\">" + alumno.getPuntajes_ua()[i] + "</td>";
+            out = out + "<td align=\"center\">" + df.format(alumno.getPorcentajes_ua()[i]) + "</td>";
         }
         
         out = out + "</tr>";
@@ -302,10 +303,10 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                     + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
                             + "<th width=\"16%\" scope=\"row\">Promedio del grupo</th>"
-                            + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.media_grupo) + "</td>";
+                            + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.porcentaje_grupo) + "</td>";
                             
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().size(); i++) {
-            out = out + "<td scope=\"col\" align=\"center\">" + df.format(this.grupo.getPromedios_ua()[i]) + "</td>";
+            out = out + "<td scope=\"col\" align=\"center\">" + df.format(this.grupo.getPorcentajes_aciertos_ua()[i]) + "</td>";
         }
         
         out = out + "</tr>";                
@@ -354,7 +355,11 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
             int n_items_unidad = this.modelosExamenes.get(this.indice_modelo).getUnidades_aprendizaje().get(i).getItems().size();
             String nombre_unidad = this.modelosExamenes.get(this.indice_modelo).getUnidades_aprendizaje().get(i).getNombre();
             
-            text = text + " <strong>" + n_items_unidad + "</strong> de ellos correspond&iacute;an a la unidad de aprendizaje <strong>" + nombre_unidad + "</strong>";
+            if(i==0){
+                text = text + " <strong>" + n_items_unidad + "</strong> de ellos correspond&iacute;an a la unidad de aprendizaje <strong>" + nombre_unidad + "</strong>";
+            } else {
+                text = text + " <strong>" + n_items_unidad + "</strong> de ellos correspond&iacute;an a la <strong>" + nombre_unidad + "</strong>";
+            }            
             
             int dif = this.modelosExamenes.get(this.indice_modelo).getUnidades_aprendizaje().size()-i;
             
@@ -402,17 +407,18 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
                                             
                                             if(grupo.equalsIgnoreCase(alumno.getGrupo())) {
                                                 this.media_grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m).getPuntaje_promedio_grupo();
+                                                this.porcentaje_grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m).getPorcentaje_aciertos_grupo();
                                                 this.grupo = this.modelosExamenes.get(indice_modelo).getZona_escolar_por_municipio()[i].get(j).getEscuelas().get(k).getTurnos().get(l).getGrupos().get(m);
                                                 double dif = this.media_grupo - alumno.getAciertos();
                                                 
                                                 if(Math.abs(dif)<=1) {
-                                                    text = text + "dentro del promedio del grupo general.";
+                                                    text = text + "dentro del promedio del grupo.";
                                                 } else {
                                                     if(dif>1) {
-                                                        text = text + "por debajo del promedio del grupo general.";
+                                                        text = text + "por debajo del promedio del grupo.";
                                                     } else {
                                                         if(dif<-1) {
-                                                            text = text + "por encima del promedio del grupo general.";
+                                                            text = text + "por encima del promedio del grupo.";
                                                         }
                                                     }
                                                 }
@@ -453,7 +459,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         }
         
         if(indice_min!=indice_max) {
-            text = text + "En la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_max).getNombre() + "</strong> obtuvo el mayor porcentaje de aciertos y en la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_min).getNombre() + "</strong> obtuvo el menor poorcentaje de aciertos.";
+            text = text + "En la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_max).getNombre() + "</strong> obtuvo el mayor porcentaje de aciertos y en la unidad de aprendizaje <strong>" + this.modelosExamenes.get(indice_modelo).getUnidades_aprendizaje().get(indice_min).getNombre() + "</strong> obtuvo el menor porcentaje de aciertos.";
         }
         
         return text;

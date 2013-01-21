@@ -562,7 +562,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 this.modelosExamenes.get(j).setVarTurno(this.variable_turno);
                 this.modelosExamenes.get(j).setVarGrupo(this.variable_grupo);
                 this.modelosExamenes.get(j).setVars_contexto(this.modelosExamenes.get(j).getVariables().subList(0, (this.modelosExamenes.get(j).getIndice_inicio_items()-1)));
-                this.modelosExamenes.get(j).setVars_items( this.modelosExamenes.get(j).getVariables().subList(this.modelosExamenes.get(j).getIndice_inicio_items(), this.modelosExamenes.get(j).getIndice_fin_items()) );
+                this.modelosExamenes.get(j).setVars_items( this.modelosExamenes.get(j).getVariables().subList(this.modelosExamenes.get(j).getIndice_inicio_items(), this.modelosExamenes.get(j).getIndice_fin_items()+1) );
                 
                 System.out.println("Opciones de respuesta: " + this.modelosExamenes.get(j).getNombreModelo());
                 
@@ -869,11 +869,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 try {
                     switch (cell.getCellType()) {
                         case Cell.CELL_TYPE_STRING:
-                            System.out.println(cell.getRichStringCellValue().getString());
+                            //System.out.println(cell.getRichStringCellValue().getString());
                             variables.add(cell.getRichStringCellValue().getString());
                             break;
                         case Cell.CELL_TYPE_NUMERIC:
-                            System.out.println(Double.toString(cell.getNumericCellValue()));
+                            //System.out.println(Double.toString(cell.getNumericCellValue()));
                             variables.add(Integer.toString((int) cell.getNumericCellValue()));
                             break;
                     }
