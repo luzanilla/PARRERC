@@ -10,11 +10,24 @@ import entidades.Grupo;
 import entidades.ModeloExamen;
 import entidades.Turno;
 import entidades.ZonaEscolar;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
  *
@@ -45,6 +58,13 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
     
     private double promedio_zona;
     private double porcentaje_aciertos_zona;
+        
+    private JFreeChart grafica_grupos_escuela; 
+    private JFreeChart grafica_escuelas_zona;
+    private List<JFreeChart> graficas_turnos_ua;
+    private JFreeChart grafica_escuelas_zona_ua;
+    
+    private Color[] colores = {new Color(79, 129, 189), new Color(246, 192, 29), new Color(142, 188, 8), new Color(255, 145, 75), new Color(216, 81, 81), new Color(149, 81, 149), new Color(93, 137, 45), new Color(10, 146, 146)};
     
     /**
      * Creates new form InformeDirectores
@@ -515,6 +535,9 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         this.promedio_zona = this.modelosExamenes.get(this.i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getPuntaje_promedio_zona_escolar();
         this.porcentaje_aciertos_zona = this.modelosExamenes.get(this.i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getPorcentaje_aciertos_zona_escolar();
 
+        crearGraficas();
+        guardarImagenes();
+        
         pintarResultados();
 
         this.jDialog1.setVisible(false);
@@ -551,6 +574,252 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
     private javax.swing.JEditorPane panel_resultados;
     // End of variables declaration//GEN-END:variables
 
+    private void crearGraficas() {                                                                                                                                                                       
+        //Creamos las graficas por grupo        
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();        
+
+        for(int m=0; m<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().size(); m++) {
+            String nombre_turno = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getId_turno();                                
+
+            for(int n=0; n<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().size(); n++) {
+                    String nombre_grupo = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().get(n).getId_grupo();
+                    dataset.setValue(this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().get(n).getPorcentaje_aciertos_grupo(), nombre_grupo, nombre_turno);
+            }
+
+        }
+        
+        grafica_grupos_escuela = ChartFactory.createBarChart("Escuela " + this.escuela, "Turnos", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
+
+        grafica_grupos_escuela.setBackgroundPaint(Color.white);
+
+        final CategoryPlot plot = (CategoryPlot) grafica_grupos_escuela.getPlot();
+
+        plot.setBackgroundPaint(new Color(240, 240, 240));
+        plot.setRangeGridlinePaint(Color.darkGray);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinePaint(Color.darkGray);            
+
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setUpperBound(105);
+
+        // customise the renderer...
+        final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+        //renderer.setDrawShapes(true);            
+        renderer.setMaximumBarWidth(.2);   
+        renderer.setItemMargin(.015);
+
+        for(Turno tur : this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos()) {
+            for(int j=0; j<tur.getGrupos().size(); j++) {  
+                renderer.setSeriesPaint(j, colores[j]);
+                renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
+                renderer.setSeriesItemLabelsVisible(j, true);                        
+                renderer.setSeriesVisible(j, true);
+            }
+        }                   
+
+        plot.setRenderer(renderer);       
+        
+        crearGraficaEscuelasZona();
+        crearGraficasUA(); 
+        crearGraficaEscuelasZonaUA();
+    }
+    
+    private void crearGraficaEscuelasZona() {
+        //Creamos las graficas por grupo        
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();        
+
+        for(int m=0; m<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().size(); m++) {
+            String nombre_escuela = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(m).getId_escuela();                                                            
+            
+            dataset.setValue(this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(m).getPorcentaje_aciertos_escuela(), "Porcentaje de aciertos", nombre_escuela);            
+        }
+        
+        grafica_escuelas_zona = ChartFactory.createBarChart("Zona " + this.zona_escolar, "Escuelas", "Porcentaje", dataset, PlotOrientation.VERTICAL, false, true, true);
+
+        grafica_escuelas_zona.setBackgroundPaint(Color.white);
+
+        final CategoryPlot plot = (CategoryPlot) grafica_escuelas_zona.getPlot();
+
+        plot.setBackgroundPaint(new Color(240, 240, 240));
+        plot.setRangeGridlinePaint(Color.darkGray);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinePaint(Color.darkGray);            
+
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setUpperBound(105);
+
+        // customise the renderer...
+        final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+        //renderer.setDrawShapes(true);            
+        renderer.setMaximumBarWidth(.2);   
+        renderer.setItemMargin(.015);
+
+        int j=0;
+        
+        for(Escuela esc : this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas()) {            
+            renderer.setSeriesPaint(j, colores[j]);
+            renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(j, true);                        
+            renderer.setSeriesVisible(j, true);            
+            
+            j++;
+        }                   
+
+        plot.setRenderer(renderer); 
+    }
+    
+    private void crearGraficasUA() {
+        //Graficas por turno y unidad de aprendizaje
+        graficas_turnos_ua = new ArrayList<>();
+               
+        for(int m=0; m<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().size(); m++) {
+            String nombre_turno = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getId_turno();                                
+            //Creamos las graficas por grupo por unidad de aprendizaje        
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset(); 
+
+            for(int n=0; n<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().size(); n++) {
+                String nombre_grupo = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().get(n).getId_grupo();
+
+                for(int i=0; i<this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().size(); i++) {
+                    String nombre_ua = this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().get(i).getNombre();
+                    dataset.setValue(this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().get(n).getPorcentajes_aciertos_ua()[i], nombre_grupo, nombre_ua);
+                }                                                            
+            }
+                        
+            JFreeChart grafica = ChartFactory.createBarChart("Escuela " + this.escuela + ", Turno " + nombre_turno, "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
+            grafica.setBackgroundPaint(Color.white);
+
+            final CategoryPlot plot = (CategoryPlot) grafica.getPlot();
+
+            plot.setBackgroundPaint(new Color(240, 240, 240));
+            plot.setRangeGridlinePaint(Color.darkGray);
+            plot.setRangeGridlinesVisible(true);
+            plot.setDomainGridlinePaint(Color.darkGray);            
+
+            final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+            rangeAxis.setUpperBound(105);
+
+            // customise the renderer...
+            final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+            //renderer.setDrawShapes(true);
+            renderer.setSeriesPaint(0, new Color(79, 129, 189));
+            renderer.setMaximumBarWidth(.15);
+            renderer.setItemMargin(.02);
+
+            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(0, true);                        
+            renderer.setSeriesVisible(0, true);
+
+            renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
+            renderer.setSeriesItemLabelsVisible(1, true);                        
+            renderer.setSeriesVisible(1, true);                    
+
+            plot.setRenderer(renderer);
+            
+            graficas_turnos_ua.add(grafica);
+        }
+    }
+    
+    private void crearGraficaEscuelasZonaUA() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset(); 
+
+        for(int n=0; n<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().size(); n++) {
+            String nombre_escuela = this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(n).getId_escuela();
+
+            for(int i=0; i<this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().size(); i++) {
+                String nombre_ua = this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().get(i).getNombre();
+                dataset.setValue(this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(n).getPorcentajes_aciertos_ua()[i], nombre_escuela, nombre_ua);
+            }                                                            
+        }
+
+        grafica_escuelas_zona_ua = ChartFactory.createBarChart("Zona Escolar " + this.zona_escolar, "Unidades de aprendizaje", "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, true);
+        grafica_escuelas_zona_ua.setBackgroundPaint(Color.white);
+
+        final CategoryPlot plot = (CategoryPlot) grafica_escuelas_zona_ua.getPlot();
+
+        plot.setBackgroundPaint(new Color(240, 240, 240));
+        plot.setRangeGridlinePaint(Color.darkGray);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinePaint(Color.darkGray);            
+
+        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setUpperBound(105);
+
+        // customise the renderer...
+        final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
+        //renderer.setDrawShapes(true);
+        renderer.setSeriesPaint(0, new Color(79, 129, 189));
+        renderer.setMaximumBarWidth(.15);
+        renderer.setItemMargin(.02);
+
+        renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
+        renderer.setSeriesItemLabelsVisible(0, true);                        
+        renderer.setSeriesVisible(0, true);
+
+        renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
+        renderer.setSeriesItemLabelsVisible(1, true);                        
+        renderer.setSeriesVisible(1, true);                    
+
+        plot.setRenderer(renderer);
+    }
+    
+    private void guardarImagenes() {
+        File dir = new File("temp\\inf_directores");                
+        
+        if(dir.exists()) {
+            borrarDirectorio(dir);                                   
+        }        
+        
+        if (dir.mkdirs()) {                                                                                               
+            
+            try {                        
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grupos_escuela.PNG"), grafica_grupos_escuela, 500, 300);                                                
+                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona.PNG"), grafica_escuelas_zona, 500, 300);                                                
+                
+                for(int i=0; i<this.graficas_turnos_ua.size(); i++) {
+                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 500, 300);                                                
+                }
+                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona_ua.PNG"), grafica_escuelas_zona_ua, 500, 300);                                                
+                
+            } catch (java.io.IOException exc) {
+                JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+            }     
+            /*
+            try { 
+                for(int i=0; i<this.graficas_turnos_ua.size(); i++) {
+                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 500, 300);                                                
+                }
+                
+            } catch (java.io.IOException exc) {
+                JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
+
+            }*/
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al crear el directorio temporal para imagenes.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        //this.jDialog1.setVisible(false);
+    }
+    
+    private void borrarDirectorio(File directorio) {
+        File[] ficheros = directorio.listFiles();
+ 
+        for (int x=0;x<ficheros.length;x++) {
+            
+            if (ficheros[x].isDirectory()) {
+                borrarDirectorio(ficheros[x]);
+            }
+            
+            ficheros[x].delete();
+        }
+        
+        directorio.delete();
+    }
+    
     private void pintarResultados() {
         DecimalFormat df = new DecimalFormat("0.000");
         
@@ -627,6 +896,19 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         //cerramos renglón de tabla principal                
         out = out + "</td>";
         out = out + "</tr>";                                         
+                        
+        //abrimos renglón de tabla principal
+        out = out + "<tr>";
+        out = out + "<td style=\"text-align:center; border:0;\">";
+        
+        //Imprimimos gráfica de los grupos de una escuela.
+        String nombreArchivo = "\"file:temp/inf_directores/grupos_escuela.PNG\"";
+        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<br /><br />";
+
+        //cerramos renglón de tabla principal                
+        out = out + "</td>";
+        out = out + "</tr>";         
         
         //abrimos renglón de tabla principal
         out = out + "<tr>";
@@ -664,7 +946,20 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
 
         //cerramos renglón de tabla principal                
         out = out + "</td>";
-        out = out + "</tr>";                         
+        out = out + "</tr>";    
+        
+        //abrimos renglón de tabla principal
+        out = out + "<tr>";
+        out = out + "<td style=\"text-align:center; border:0;\">";
+        
+        //Imprimimos gráfica de los grupos de una escuela.
+        nombreArchivo = "\"file:temp/inf_directores/escuelas_zona.PNG\"";
+        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<br /><br />";
+
+        //cerramos renglón de tabla principal                
+        out = out + "</td>";
+        out = out + "</tr>"; 
                                 
         //Informe de resultados por unidad de aprendizaje para Directores.
         out = out + "<tr>"
@@ -772,7 +1067,22 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
 
         //cerramos renglón de tabla principal                
         out = out + "</td>";
-        out = out + "</tr>";                                         
+        out = out + "</tr>"; 
+        
+        for(int i=0; i<graficas_turnos_ua.size(); i++) {
+            //abrimos renglón de tabla principal
+            out = out + "<tr>";
+            out = out + "<td style=\"text-align:center; border:0;\">";
+
+            //Imprimimos gráfica de los grupos de una escuela.
+            nombreArchivo = "\"file:temp/inf_directores/grafica_ua" + i + ".PNG\"";
+            out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+            out = out + "<br /><br />";
+
+            //cerramos renglón de tabla principal                
+            out = out + "</td>";
+            out = out + "</tr>"; 
+        } 
         
         //abrimos renglón de tabla principal
         out = out + "<tr>";
@@ -838,7 +1148,20 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
 
         //cerramos renglón de tabla principal                
         out = out + "</td>";
-        out = out + "</tr>";                                
+        out = out + "</tr>";  
+        
+        //abrimos renglón de tabla principal
+        out = out + "<tr>";
+        out = out + "<td style=\"text-align:center; border:0;\">";
+        
+        //Imprimimos gráfica de los grupos de una escuela.
+        nombreArchivo = "\"file:temp/inf_directores/escuelas_zona_ua.PNG\"";
+        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<br /><br />";
+
+        //cerramos renglón de tabla principal                
+        out = out + "</td>";
+        out = out + "</tr>";
         
         out = out + "</table>";
               
