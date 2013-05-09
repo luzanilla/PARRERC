@@ -6,11 +6,13 @@ package gui;
 
 import entidades.ModeloExamen;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -47,8 +49,12 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         temp2 = new ArrayList<>(this.modelosExamenes.get(0).getVars_contexto().subList(0, this.modelosExamenes.get(0).getVars_contexto().size()));
                     
         this.jDialog1.pack();
-        this.jDialog1.setLocationRelativeTo(null);
-        this.jDialog1.setVisible(true);
+        this.jDialog1.setLocationRelativeTo(null);       
+        
+        Dimension desktopSize = jDesktopPane1.getSize();
+        Dimension jInternalFrameSize = this.getSize();
+
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);  
     }
 
     /**
@@ -205,6 +211,7 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
             e1.printStackTrace();
         }
 
+        panel_resultados.setEditable(false);
         panel_resultados.setContentType("text/html");
         jScollPane3.setViewportView(panel_resultados);
 
@@ -218,9 +225,9 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 342, Short.MAX_VALUE)
+            .addGap(0, 362, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
+                .addComponent(jScollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
         );
 
         pack();
@@ -263,7 +270,8 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         
         pintar_resultados();
         
-        this.setVisible(true);
+        this.toFront();
+        this.show();
     }//GEN-LAST:event_boton_aceptarActionPerformed
 
     private void lista_variable_id_sujetoValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lista_variable_id_sujetoValueChanged
@@ -630,4 +638,12 @@ public class Caracterizacion extends javax.swing.JInternalFrame {
         this.panel_resultados.setText(out); 
     }
 
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.jDialog1.setVisible(true);
+    }
+    
 }

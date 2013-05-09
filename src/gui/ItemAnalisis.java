@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 
 /**
  *
@@ -42,8 +43,7 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
         initComponents();
         
         this.dialog_conf.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        this.dialog_conf.setLocationRelativeTo(this.getParent());
-        this.dialog_conf.setVisible(true);
+        this.dialog_conf.setLocationRelativeTo(this.getParent());        
     }
 
     
@@ -119,6 +119,11 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
         jPanel2.add(jButton1);
 
         jButton2.setText("Cancelar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton2);
 
         javax.swing.GroupLayout dialog_confLayout = new javax.swing.GroupLayout(dialog_conf.getContentPane());
@@ -166,7 +171,7 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
         );
 
         pack();
@@ -207,7 +212,8 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
 
         this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);                
         
-        this.setVisible(true);   
+        this.toFront();
+        this.show();         
         
         try {
             this.setSelected(true);
@@ -215,6 +221,10 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
             Logger.getLogger(ItemAnalisis.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.dialog_conf.setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox check_dificultad;
@@ -315,6 +325,7 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
     }
 
     private void calculaDiscriminacion() {
+        DecimalFormat df = new DecimalFormat("0.00");
         
         for(int j=0; j<this.modelosExamenes.size(); j++) {
             discriminacion_reactivos = new double[this.modelosExamenes.get(j).getClavesRespuesta().size()];
@@ -328,8 +339,11 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
 
                 double aciertos_altos = getAciertosGrupoAlto(i, numero_sujetos, j);
                 double aciertos_bajos = getAciertosGrupoBajo(i, numero_sujetos, j);
+                
+                //System.out.println( "Altos: " + (i+1) + " : " + df.format(aciertos_altos/numero_sujetos) );
+                //System.out.println( "Bajos: " + (i+1) + " : " + df.format(aciertos_bajos/numero_sujetos) );
 
-                discriminacion_reactivos[i] = ((aciertos_altos-aciertos_bajos)/numero_sujetos);                         
+                discriminacion_reactivos[i] = ((aciertos_altos/numero_sujetos)-(aciertos_bajos/numero_sujetos));                         
             }
             
             this.modelosExamenes.get(j).setDiscriminacion_reactivos(discriminacion_reactivos);
@@ -342,7 +356,7 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
         
         for(int i=0; i<numero_sujetos; i++) {
             Alumno a = this.modelosExamenes.get(j).getAlumnosOrdenada().get(i);
-            aciertos += a.getRespuestaCalificada(indice_item);
+            aciertos += a.getRespuestaCalificada(indice_item);            
         }
         
         return aciertos;
@@ -350,12 +364,12 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
 
     private int getAciertosGrupoBajo(int indice_item, int numero_sujetos, int j) {
         int aciertos = 0;
-        int indice = this.modelosExamenes.get(j).getAlumnosOrdenada().size()-numero_sujetos-1;
+        int indice = this.modelosExamenes.get(j).getAlumnosOrdenada().size()-numero_sujetos;
         
         for(int i=0; i<numero_sujetos; i++) {
             Alumno a = this.modelosExamenes.get(j).getAlumnosOrdenada().get(indice);
             aciertos += a.getRespuestaCalificada(indice_item);
-            indice++;
+            indice++;                
         }
         
         return aciertos;
@@ -398,7 +412,7 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
 
     private void pintar_resultados() {
         String out = "";
-        DecimalFormat df = new DecimalFormat("0.000");
+        DecimalFormat df = new DecimalFormat("0.00");
         
         for(int k=0; k<this.modelosExamenes.size(); k++) {            
         
@@ -487,6 +501,14 @@ public class ItemAnalisis extends javax.swing.JInternalFrame {
         }        
         
         this.panel_resultados.setText(out);        
+    }
+
+    public void mostrar() {
+        this.dialog_conf.setVisible(true);
+    }
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
     }
         
 }

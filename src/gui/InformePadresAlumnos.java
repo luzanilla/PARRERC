@@ -7,21 +7,12 @@ package gui;
 import entidades.Alumno;
 import entidades.Grupo;
 import entidades.ModeloExamen;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -29,6 +20,7 @@ import javax.swing.text.StyledDocument;
  */
 public class InformePadresAlumnos extends javax.swing.JInternalFrame {
 
+    private JDesktopPane jDesktopPane1;
     private String buscar_id_examen;
     private List<ModeloExamen> modelosExamenes;
     private Alumno alumno;
@@ -41,11 +33,11 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
      */
     public InformePadresAlumnos(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {        
         this.modelosExamenes = modelosExamenes;
+        this.jDesktopPane1 = jDesktopPane1;
         initComponents();   
         
         this.jDialog1.setLocationRelativeTo(this);
-        this.pack();       
-        this.jDialog1.setVisible(true);        
+        this.pack();               
     }
 
     /**
@@ -189,7 +181,7 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
         );
 
         pack();
@@ -205,7 +197,13 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         if(buscarExamen(id)){
             pintarResultados();
             this.jDialog1.setVisible(false);
-            this.setVisible(true);            
+            
+            Dimension desktopSize = jDesktopPane1.getSize();
+            Dimension jInternalFrameSize = this.getSize();
+
+            this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
+            this.toFront();
+            this.show();            
         } else {
             JOptionPane.showMessageDialog(this, "El examen " + id + " no se encuentra en la base de datos", "Id de examen no encontrado", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -259,18 +257,18 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
     private void pintarResultados() {
         DecimalFormat df = new DecimalFormat("0.000");
         
-        String out = "<table align\"center\" width=\"60%\" border=\"0\" cellspacing=\"10px\" cellpadding=\"0\">";
+        String out = "<table align\"center\" width=\"800px\" border=\"1\" cellspacing=\"10px\" cellpadding=\"0\">";
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados para alumnos y padres de familia.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><img src=\"file:imagenes_apoyo/padres.png\" border=\"0\"></th>"
                 + "  </tr>";
         out = out + "<tr>"
-                    + "<td>El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El porcentaje de aciertos obtenidos en todo el examen fue de <strong>" + df.format(this.alumno.getPorcentaje_aciertos()) + "%</strong>, " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "<br /></td>"
+                    + "<td style=\"border:0;\">El estudiante con el examen <strong>" + this.alumno.getId() + "</strong> aplic&oacute; el modelo de examen <strong>" + this.alumno.getModelo() + "</strong> que tenía <strong>" + this.modelosExamenes.get(this.indice_modelo).getNumero_de_items() + "</strong> &iacute;tems." + this.getTextoUA() + " El porcentaje de aciertos obtenidos en todo el examen fue de <strong>" + df.format(this.alumno.getPorcentaje_aciertos()) + "%</strong>, " + this.getTextoMediaGrupo() + " " + this.getTextoMinMaxUA() + "<br /></td>"
                   + "</tr>";
         
         //Tabla con datos del sujeto
         out = out + "<tr>"
-                    + "<td>"
-                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<td style=\"border:0;\">"
+                    + "<table align\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
                             + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">No. exmanen</th>"
                             + "<th width=\"16%\" scope=\"col\">Porcentaje de aciertos</th>"
@@ -299,8 +297,8 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         
         //Tabla con datos del grupo
         out = out + "<tr>"
-                    + "<td>"
-                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<td style=\"border:0;\">"
+                    + "<table align\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
                             + "<th width=\"16%\" scope=\"row\">Porcentaje del grupo</th>"
                             + "<td width=\"16%\" scope=\"col\" align=\"center\">" + df.format(this.porcentaje_grupo) + "%</td>";
@@ -316,8 +314,8 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         
         //Tabla con datos del examen
         out = out + "<tr>"
-                    + "<td>"
-                    + "<table align\"center\" width=\"90%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    + "<td style=\"border:0;\">"
+                    + "<table align\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
                         + "<tr>"
                             + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">&nbsp;</th>"
                             + "<th width=\"16%\" rowspan=\"2\" scope=\"col\">General</th>"
@@ -464,5 +462,13 @@ public class InformePadresAlumnos extends javax.swing.JInternalFrame {
         
         return text;
     }
-    
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.jDialog1.setVisible(true);        
+    }
+        
 }

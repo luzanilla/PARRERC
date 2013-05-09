@@ -4,7 +4,6 @@
  */
 package gui;
 
-import entidades.Alumno;
 import entidades.Escuela;
 import entidades.Grupo;
 import entidades.ModeloExamen;
@@ -17,6 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -33,8 +33,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author UEE
  */
 public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
-    private List<ModeloExamen> modelosExamenes;
-    private ConstructorUnidadDeAprendizaje define_unidades;
+    private List<ModeloExamen> modelosExamenes;    
     private DefineVariablesAnalisis dv;
     private List<String> opciones_respuesta_municipio; 
     private List<ZonaEscolar>[] zona_escolar_por_municipio;
@@ -46,11 +45,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
      */
     public ResultadosPorUnidadAprendizaje(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {
         this.modelosExamenes = modelosExamenes;
-        initComponents();
-        
-        if(this.modelosExamenes.get(0).getUnidades_aprendizaje()==null) {
-            define_unidades = new ConstructorUnidadDeAprendizaje(this.modelosExamenes, jDesktopPane1);
-        }
+        initComponents();                
         
         dv = new DefineVariablesAnalisis(this.modelosExamenes, jDesktopPane1);
         
@@ -61,8 +56,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
 
-        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
-        this.setVisible(true);
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);        
     }
 
     /**
@@ -490,12 +484,12 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
             plot.setDomainGridlinePaint(Color.darkGray);            
 
             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-            rangeAxis.setUpperBound(100);
+            rangeAxis.setUpperBound(105);
 
             // customise the renderer...
             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
             //renderer.setDrawShapes(true);            
-            renderer.setMaximumBarWidth(.2);   
+            renderer.setMaximumBarWidth(.12);   
             renderer.setItemMargin(.015);
             
             for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) {  
@@ -541,12 +535,12 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 plot.setDomainGridlinePaint(Color.darkGray);            
 
                 final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                rangeAxis.setUpperBound(100);
+                rangeAxis.setUpperBound(105);
 
                 // customise the renderer...
                 final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
                 //renderer.setDrawShapes(true);            
-                renderer.setMaximumBarWidth(.15); 
+                renderer.setMaximumBarWidth(.12); 
                 renderer.setItemMargin(.015);
 
                 for(int x=0; x<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); x++) {  
@@ -597,12 +591,12 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     plot.setDomainGridlinePaint(Color.darkGray);            
 
                     final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                    rangeAxis.setUpperBound(100);
+                    rangeAxis.setUpperBound(105);
 
                     // customise the renderer...
                     final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
                     //renderer.setDrawShapes(true);            
-                    renderer.setMaximumBarWidth(.15);    
+                    renderer.setMaximumBarWidth(.12);    
                     renderer.setItemMargin(.015);
 
                     for(int x=0; x<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); x++) {  
@@ -635,7 +629,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             
                             for(int m=0; m<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().size(); m++) {
                                 String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
-                                double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPorcentajes_aciertos_ua()[m]));
+                                double valor = Double.valueOf(df.format(this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getPorcentajes_aciertos_ua()[z]));
                                 
                                 dataset.setValue(valor, nombre_turno, nombre_ua);
                             }
@@ -654,12 +648,12 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         plot.setDomainGridlinePaint(Color.darkGray);            
 
                         final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                        rangeAxis.setUpperBound(100);
+                        rangeAxis.setUpperBound(105);
 
                         // customise the renderer...
                         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
                         //renderer.setDrawShapes(true);            
-                        renderer.setMaximumBarWidth(.15);
+                        renderer.setMaximumBarWidth(.12);
                         renderer.setItemMargin(.015);
 
                         for(int x=0; x<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); x++) {  
@@ -718,12 +712,12 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             plot.setDomainGridlinePaint(Color.darkGray);            
 
                             final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-                            rangeAxis.setUpperBound(100);
+                            rangeAxis.setUpperBound(105);
 
                             // customise the renderer...
                             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
                             //renderer.setDrawShapes(true);            
-                            renderer.setMaximumBarWidth(.15);
+                            renderer.setMaximumBarWidth(.12);
                             renderer.setItemMargin(.015);
 
                             for(int x=0; x<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); x++) {  
@@ -765,7 +759,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     if(this.modelosExamenes.get(i).isPor_municipio()) {
                         try {
                             String nombre_archivo = "municipios";                            
-                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGrafica_ua_municipio(), 600, 300);
+                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGrafica_ua_municipio(), 700, 300);
                         } catch (java.io.IOException exc) {
                             JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
 
@@ -778,7 +772,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             for(int j=0; j<this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size(); j++) { 
                                 String nombre_archivo = this.modelosExamenes.get(i).getOpciones_respuesta_municipio().get(j);
                                                                 
-                                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGraficas_ua_zona_escolar().get(j), 600, 300);
+                                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getGraficas_ua_zona_escolar().get(j), 700, 300);
                             }
                                                         
                         } catch (java.io.IOException exc) {
@@ -797,13 +791,13 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                     String nombre_zona_escolar = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getNombre_zona_escolar();                                    
                                     String nombre_archivo = nombre_zona_escolar + "_" + nombre_municipio;                                                                            
                                     
-                                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getGrafica_ua_zona(), 600, 300);
+                                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + ".PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getGrafica_ua_zona(), 700, 300);
                                     
                                     for(int l=0; l<this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().size(); l++) {                                        
                                         String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                        
                                         nombre_archivo = nombre_zona_escolar + "_" + nombre_municipio + "_" + nombre_escuela;                                                                            
                                     
-                                        ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_turno.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getGrafica_ua_tur(), 600, 300);
+                                        ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_turno.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getGrafica_ua_tur(), 700, 300);
                                     }
                                                                                                                                                 
                                 }
@@ -832,7 +826,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                             String nombre_turno = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getId_turno();                                
                                             String nombre_archivo = nombre_zona_escolar + "_" + nombre_municipio + "_" + nombre_escuela + "_" + nombre_turno;
                                             
-                                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_grupo.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrafica_ua_grupos(), 600, 300);
+                                            ChartUtilities.saveChartAsPNG(new java.io.File("temp\\res_por_ua\\" + this.modelosExamenes.get(i).getNombreModelo() + "\\" + nombre_archivo + "_grupo.PNG"), this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getTurnos().get(m).getGrafica_ua_grupos(), 700, 300);
                                         }
                                                                             
                                     }                                    
@@ -880,7 +874,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
         
         for(int i=0; i<this.modelosExamenes.size(); i++) {                                
             out = out +
-                    "<table align=\"center\" width=\"550px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"
+                    "<table align=\"center\" width=\"800px\" border=\"1\" cellspacing=\"10\" cellpadding=\"0\">"
                     + "<caption style=\"text-align:center; font-weight:bold; font-size: 13px;\"> " + this.modelosExamenes.get(i).getNombreModelo() + "</caption>";
             
             //Por municipio
@@ -891,7 +885,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Municipio (Puntaje y porcentarje promedio)</strong></h3>";
                 out = out +
-                    "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                    
+                    "<table align=\"center\" width=\"600px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                    
                     + "<tr>";
 
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Municipio</td>";
@@ -948,7 +942,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                     out = out + "<td style=\"text-align:center; border:0;\">";
                     
                     String nombreArchivo = "\"file:temp/res_por_ua/" + this.modelosExamenes.get(i).getNombreModelo() + "/municipios.PNG\"";                                
-                    out = out + "<img src=" + nombreArchivo + " width=\"600\" height=\"300\" border=\"0\">";
+                    out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
                     out = out + "<br /><br />";
                     
                     //cerramos renglón de tabla principal
@@ -965,7 +959,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Zona Escolar (Puntaje y porcentarje promedio)</strong></h3>";
                 out = out +
-                        "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        "<table align=\"center\" width=\"600px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
                         + "<tr>";
                 
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
@@ -1029,7 +1023,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                         out = out + "<td style=\"text-align:center; border:0;\">";
 
                         String nombreArchivo = "\"file:temp/res_por_ua/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_municipio + ".PNG\"";
-                        out = out + "<img src=" + nombreArchivo + " width=\"600\" height=\"300\" border=\"0\">";
+                        out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
                         out = out + "<br /><br />";
 
                         //cerramos renglón de tabla principal                
@@ -1049,7 +1043,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Escuela (Puntaje y porcentarje promedio)</strong></h3>";
                 
                 out = out +
-                        "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        "<table align=\"center\" width=\"600px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
                         + "<tr>";
                     
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
@@ -1127,7 +1121,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             out = out + "<td style=\"text-align:center; border:0;\">";
 
                             String nombreArchivo = "\"file:temp/res_por_ua/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + ".PNG\"";
-                            out = out + "<img src=" + nombreArchivo + " width=\"600\" height=\"300\" border=\"0\">";
+                            out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
                             out = out + "<br /><br />";
 
                             //cerramos renglón de tabla principal                
@@ -1148,7 +1142,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Turno (Puntaje y porcentarje promedio)</strong></h3>";
                 
                 out = out +
-                        "<table align=\"center\" width=\"600px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
                         + "<tr>";
                     
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
@@ -1247,7 +1241,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                 out = out + "<td style=\"text-align:center; border:0;\">";
 
                                 String nombreArchivo = "\"file:temp/res_por_ua/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + "_turno.PNG\"";
-                                out = out + "<img src=" + nombreArchivo + " width=\"600\" height=\"300\" border=\"0\">";
+                                out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
                                 out = out + "<br /><br />";
 
                                 //cerramos renglón de tabla principal                
@@ -1270,7 +1264,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                 out = out + "<h3 style=\"color:#333\"><strong>Resultados generales por Grupo (Puntaje y porcentarje promedio)</strong></h3>";
                 
                 out = out +
-                        "<table align=\"center\" width=\"550px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
+                        "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                        
                         + "<tr>";
                     
                 out = out + "<td style=\"text-align:center; font-weight:bold;\" rowspan=\"2\">Zona escolar</td>";
@@ -1394,7 +1388,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                                     out = out + "<td style=\"text-align:center; border:0;\">";
 
                                     String nombreArchivo = "\"file:temp/res_por_ua/" + this.modelosExamenes.get(i).getNombreModelo() + "/" + nombre_archivo_e + "_grupo.PNG\"";
-                                    out = out + "<img src=" + nombreArchivo + " width=\"600\" height=\"300\" border=\"0\">";
+                                    out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
                                     out = out + "<br /><br />";
 
                                     //cerramos renglón de tabla principal                
@@ -1429,7 +1423,7 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
                             String nombre_escuela = this.modelosExamenes.get(i).getZona_escolar_por_municipio()[j].get(k).getEscuelas().get(l).getId_escuela();                                                                                    
                             
                             out = out +
-                                    "<table align=\"center\" width=\"450px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
+                                    "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
                                     + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\"> Escuela: " + nombre_escuela + "<br />"
                                     + "Zona Escolar: " + nombre_zona + "<br />"
                                     + "Municipio: " + nombre_municipio
@@ -1526,4 +1520,14 @@ public class ResultadosPorUnidadAprendizaje extends javax.swing.JInternalFrame {
             mo.reiniciarSeleccionAnalisis();
         }
     }
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.toFront();
+        this.show();
+    }
+        
 }

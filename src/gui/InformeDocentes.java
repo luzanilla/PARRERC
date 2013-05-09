@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -34,6 +35,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class InformeDocentes extends javax.swing.JInternalFrame {
 
+    private JDesktopPane jDesktopPane1;
+    private Color[] colores = {new Color(79, 129, 189), new Color(246, 192, 29), new Color(142, 188, 8), new Color(255, 145, 75), new Color(216, 81, 81), new Color(149, 81, 149), new Color(93, 137, 45), new Color(10, 146, 146)};
     private List<ModeloExamen> modelosExamenes;
     private String modelo;
     private String municipio;
@@ -62,15 +65,15 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
      * Creates new form InformeDocentes
      */
     public InformeDocentes(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {
-        this.modelosExamenes = modelosExamenes;        
+        this.modelosExamenes = modelosExamenes;  
+        this.jDesktopPane1 = jDesktopPane1;
         
         initComponents();
         
         llenarSelects();
         
         this.jDialog1.pack();
-        this.jDialog1.setLocationRelativeTo(null);
-        this.jDialog1.setVisible(true);
+        this.jDialog1.setLocationRelativeTo(null);        
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -629,7 +632,14 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         pintarResultados();
         
         this.jDialog1.setVisible(false);
-        this.setVisible(true);
+        
+        Dimension desktopSize = jDesktopPane1.getSize();
+        Dimension jInternalFrameSize = this.getSize();
+
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
+        
+        this.show();       
+        this.toFront();        
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -742,18 +752,20 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
 
         // customise the renderer...
         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
-        //renderer.setDrawShapes(true);
-        renderer.setSeriesPaint(0, new Color(79, 129, 189));
-        renderer.setMaximumBarWidth(.15);
+        //renderer.setDrawShapes(true);        
+        renderer.setMaximumBarWidth(.12);
         renderer.setItemMargin(.02);
+        
+        for(int m=0; m<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().size(); m++) {            
 
-        renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
-        renderer.setSeriesItemLabelsVisible(0, true);                        
-        renderer.setSeriesVisible(0, true);
+            for(int n=0; n<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().size(); n++) {
+                renderer.setSeriesPaint(n, colores[n]);
+                renderer.setSeriesItemLabelGenerator(n, new StandardCategoryItemLabelGenerator());
+                renderer.setSeriesItemLabelsVisible(n, true);                        
+                renderer.setSeriesVisible(n, true);
+            }
 
-        renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
-        renderer.setSeriesItemLabelsVisible(1, true);                        
-        renderer.setSeriesVisible(1, true);                    
+        }                                 
 
         plot.setRenderer(renderer);       
         
@@ -770,7 +782,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         if (dir.mkdirs()) {                                                                                               
             
             try {                        
-                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_docentes\\grupos_escuela.PNG"), grafica_grupos_escuela, 500, 300);                                                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_docentes\\grupos_escuela.PNG"), grafica_grupos_escuela, 700, 300);                                                
             } catch (java.io.IOException exc) {
                 JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
 
@@ -778,7 +790,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
             
             try { 
                 for(int i=0; i<this.graficas_turnos_ua.size(); i++) {
-                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_docentes\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 500, 300);                                                
+                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_docentes\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 700, 300);                                                
                 }
                 
             } catch (java.io.IOException exc) {
@@ -811,16 +823,16 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
     private void pintarResultados() {
         DecimalFormat df = new DecimalFormat("0.000");
         
-        String out = "<table align\"center\" width=\"80%\" border=\"0\" cellspacing=\"10px\" cellpadding=\"0\">";
+        String out = "<table align\"center\" width=\"800\" border=\"1\" cellspacing=\"10px\" cellpadding=\"0\">";
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados generales para Docentes.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><img src=\"file:imagenes_apoyo/docentes.png\" border=\"0\"></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
-        out = out + "<table align=\"center\" width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
+        out = out + "<table align=\"center\" width=\"700px\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
         out = out + "<td>Los estudiantes del grupo <strong>" + this.grupo + "</strong> obtuvieron un puntaje promedio de <strong>" + df.format(this.promedio_grupo) + "</strong> el cual es <strong>" + getTextoCompGrupoEsc() + "</strong> al puntaje promedio de todos los estudiantes examinados en esta escuela, el cual se muestra en la tabla 2. El puntaje m&aacute;s alto de este grupo fue de <strong>" + getMaxPuntajeGrupo() + "</strong> y el m&aacute;s bajo fue de <strong>" + getMinPuntajeGrupo() + "</strong>.<br /></td>";        
         out = out + "</tr>";
@@ -836,7 +848,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de los alumnos del grupo seleccionado
         out = out +
-                "<table align=\"center\" width=\"50%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
+                "<table align=\"center\" width=\"500px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 1. Resultados generales del grupo " + this.grupo + " del turno " + this.turno + " de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
 
@@ -881,7 +893,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de los grupos de la escuela seleccionada
         out = out +
-                "<table align=\"center\" width=\"50%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"500px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 2. Resultados generales de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
 
@@ -930,7 +942,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         
         //Imprimimos gráfica de los grupos de una escuela.
         String nombreArchivo = "\"file:temp/inf_docentes/grupos_escuela.PNG\"";
-        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
         out = out + "<br /><br />";
 
         //cerramos renglón de tabla principal                
@@ -939,14 +951,14 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
                                 
         //Informe de resultados por unidad de aprendizaje para Docentes.
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados por unidad de aprendizaje para Docentes.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><h2>Informe de resultados por unidad de aprendizaje para Docentes.</h2></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
-        out = out + "<table align=\"center\" width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
+        out = out + "<table align=\"center\" width=\"700px\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
         out = out + "<td>Los estudiantes del grupo <strong>" + this.grupo + "</strong> obtuvieron el puntaje m&aacute;s alto en la unidad de aprendizaje <strong>" + getUnidadMax() + "</strong>, mientras que en la unidad de aprendizaje <strong>" + getUnidadMin() + "</strong> obtuvieron el puntaje m&aacute;s bajo. " + getTextoUASuperior() + ".<br /></td>";        
         out = out + "</tr>";
@@ -962,7 +974,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de los alumnos del grupo seleccionado por unidad de aprendizaje
         out = out +
-                "<table align=\"center\" width=\"60%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
+                "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 3. Resultados por unidad de aprendizaje del grupo " + this.grupo + " del turno " + this.turno + " de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
         
@@ -1032,7 +1044,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de los grupos de la escuela seleccionada
         out = out +
-                "<table align=\"center\" width=\"60%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 4. Resultados por unidad de aprendizaje de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
 
@@ -1109,7 +1121,7 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
 
             //Imprimimos gráfica de los grupos de una escuela.
             nombreArchivo = "\"file:temp/inf_docentes/grafica_ua" + i + ".PNG\"";
-            out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+            out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
             out = out + "<br /><br />";
 
             //cerramos renglón de tabla principal                
@@ -1269,22 +1281,33 @@ public class InformeDocentes extends javax.swing.JInternalFrame {
 
             // customise the renderer...
             final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
-            //renderer.setDrawShapes(true);
-            renderer.setSeriesPaint(0, new Color(79, 129, 189));
-            renderer.setMaximumBarWidth(.15);
+            //renderer.setDrawShapes(true);            
+            renderer.setMaximumBarWidth(.12);
             renderer.setItemMargin(.02);
 
-            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
-            renderer.setSeriesItemLabelsVisible(0, true);                        
-            renderer.setSeriesVisible(0, true);
+            for(m=0; m<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().size(); m++) {            
 
-            renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
-            renderer.setSeriesItemLabelsVisible(1, true);                        
-            renderer.setSeriesVisible(1, true);                    
+                for(int n=0; n<this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos().get(m).getGrupos().size(); n++) {
+                    renderer.setSeriesPaint(n, colores[n]);
+                    renderer.setSeriesItemLabelGenerator(n, new StandardCategoryItemLabelGenerator());
+                    renderer.setSeriesItemLabelsVisible(n, true);                        
+                    renderer.setSeriesVisible(n, true);
+                }
+
+            }                              
 
             plot.setRenderer(renderer);
             
             graficas_turnos_ua.add(grafica);
         }
     }
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.jDialog1.setVisible(true);
+    }
+        
 }

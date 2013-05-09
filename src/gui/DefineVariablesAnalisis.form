@@ -98,21 +98,25 @@
       <SubComponents>
         <Component class="javax.swing.JCheckBox" name="check_municipio">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Por municipio"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="check_zona_escolar">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Por zona escolar"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="check_escuela">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Por escuela"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="check_grupo">
           <Properties>
+            <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Por grupo"/>
           </Properties>
         </Component>
@@ -120,6 +124,7 @@
     </Container>
     <Component class="javax.swing.JCheckBox" name="check_mostrar_graficas">
       <Properties>
+        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Mostrar gr&#xe1;ficas"/>
       </Properties>
     </Component>

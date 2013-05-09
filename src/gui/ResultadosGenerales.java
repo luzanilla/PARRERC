@@ -5,6 +5,7 @@
 package gui;
 
 import entidades.Alumno;
+import entidades.Anova;
 import entidades.Escuela;
 import entidades.Grupo;
 import entidades.ModeloExamen;
@@ -17,6 +18,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -47,6 +49,16 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
     
     private List<JFreeChart> graficas;
     
+    private double p_value_municipio;
+    private double f_value_municipio;
+    private boolean rechazada_municipio;
+    
+    private double p_value_zona;
+    private double f_value_zona;
+    private boolean rechazada_zona;
+    
+    private Anova anova;
+    
     /**
      * Creates new form ResultadosGenerales
      */
@@ -63,8 +75,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
 
-        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
-        this.setVisible(true);
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);        
     }
 
     /**
@@ -142,7 +153,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         frecuencias_op_res_municipio = new ArrayList<>();
         puntaje_total_municipio = new ArrayList<>();
         puntaje_promedio_municipio = new ArrayList<>();
-        porcentaje_aciertos_municipio = new ArrayList<>();
+        porcentaje_aciertos_municipio = new ArrayList<>();                
         
         //Calculamos la frecuencia de cada municipio y su puntaje total para despues calcular el puntaje promedio por municipio y porcentaje de aciertos
         for(int i=0; i<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); i++) {            
@@ -155,7 +166,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             if( !opciones_respuesta_municipio.contains(respuesta) ) {
                 opciones_respuesta_municipio.add(respuesta);
                 frecuencias_op_res_municipio.add(new Integer(1));
-                puntaje_total_municipio.add(new Double(aciertos));
+                puntaje_total_municipio.add(new Double(aciertos));                                
             } else {
                 int indice_respuesta = opciones_respuesta_municipio.indexOf(respuesta);
 
@@ -184,7 +195,17 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         this.modelosExamenes.get(indice_modelo).setOpciones_respuesta_municipio(opciones_respuesta_municipio);
         this.modelosExamenes.get(indice_modelo).setPuntaje_promedio_municipio(puntaje_promedio_municipio);
         this.modelosExamenes.get(indice_modelo).setPorcentaje_aciertos_municipio(porcentaje_aciertos_municipio);
-    }
+
+        if(opciones_respuesta_municipio.size()>1){
+            //Calcular ANOVA de Municipio
+            this.calcularAnova(opciones_respuesta_municipio, frecuencias_op_res_municipio, indice_modelo);
+
+            p_value_municipio = anova.getPValue();
+            f_value_municipio = anova.getFValue();                        
+            rechazada_municipio = anova.getResult();
+        }
+                
+    }        
 
     private void calcularPorZonaEscolar(int indice_modelo) {
         //Si eligió la opción por municipio calculamos las zonas escolares por municipio
@@ -253,6 +274,7 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                 
             }
         }
+                
     }
 
     private void calcularPorEscuela(int indice_modelo) {
@@ -454,6 +476,22 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
         grupo.setAlumnos(alumnos);        
         
         return grupo;
+    }
+    
+    private void calcularAnova(List<String> lista, List<Integer> lista_frec, int indice_modelo) {
+        //Calculamos ANOVA
+        anova = new Anova();
+        
+        for(int i=0; i<lista.size(); i++) {
+            double[] puntajes = new double[lista_frec.get(i).intValue()];
+            
+            for(int j=0; j<this.modelosExamenes.get(indice_modelo).getNumero_de_examinados(); j++) { 
+                puntajes[i] = this.modelosExamenes.get(indice_modelo).getAlumnosOrdenada().get(j).getAciertos();
+            }
+            
+            anova.addDataSet(puntajes);
+        }        
+                
     }
     
     private void crearGraficas(int i) {        
@@ -881,6 +919,45 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
                     out = out + "</td>";
                     out = out + "</tr>";
                 }
+                
+                if(this.modelosExamenes.get(i).getOpciones_respuesta_municipio().size()>1) {
+                    //abrimos renglón de tabla principal
+                    out = out + "<tr>";
+                    out = out + "<td style=\"text-align:center; border:0;\">";
+
+
+                    //Tabla de anova
+                    out = out +
+                        "<table align=\"center\" width=\"400px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">" 
+                        + "<caption style=\"text-align:center; font-weight:bold; font-size: 13px;\"> Tabla de ANOVA de un factor por Municipio</caption>"                   
+                        + "<tr>";
+
+                    out = out + "<td style=\"text-align:center; font-weight:bold;\">Valor F</td>";
+                    out = out + "<td style=\"text-align:center; font-weight:bold;\">Valor P</td>";
+                    out = out + "<td style=\"text-align:center; font-weight:bold;\">Significativo</td>";
+                    out = out + "</tr>";    
+
+                    out = out + "<tr>"; 
+                    out = out + "<td style=\"text-align:center; font-weight:bold;\">" + this.f_value_municipio + "</td>";
+                    out = out + "<td style=\"text-align:center; font-weight:bold;\">" + this.p_value_municipio + "</td>";
+
+                    if(rechazada_municipio) {
+                        out = out + "<td style=\"text-align:center; font-weight:bold;\">S&iacute;</td>";
+                    } else {
+                        out = out + "<td style=\"text-align:center; font-weight:bold;\">No</td>";
+                    }
+
+                    out = out + "</tr>"; 
+
+                    out = out + "</table>";
+                    out = out + "<br /><br />";
+                    out = out + "<br /><br />";
+
+                    //cerramos renglón de tabla principal
+                    out = out + "</td>";
+                    out = out + "</tr>";
+                }
+                
             }                       
             
             //Por Zona Escolar
@@ -1345,5 +1422,14 @@ public class ResultadosGenerales extends javax.swing.JInternalFrame {
             mo.reiniciarSeleccionAnalisis();
         }
     }        
-    
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.toFront();
+        this.show();
+    }
+        
 }

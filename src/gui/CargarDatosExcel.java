@@ -575,7 +575,7 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 System.out.println("Alumnos Ordenada: " + this.modelosExamenes.get(j).getNombreModelo());
                 
                 for (int i = 0; i < this.modelosExamenes.get(j).getAlumnosOrdenada().size(); i++) {
-                    System.out.print(this.modelosExamenes.get(j).getAlumnosOrdenada().get(i).getId() + ", ");
+                    System.out.println(i + " " + this.modelosExamenes.get(j).getAlumnosOrdenada().get(i).getId() + ", ");
                 }
                 
                 System.out.println("");
@@ -994,11 +994,13 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             alumnos = new ArrayList<>();
             opcionesRespuesta = new ArrayList<>();
             int contRenglones = 0;
+            double total_aciertos = 0;
 
             System.out.println("Variables size: " + this.modelosExamenes.get(j).getVariables().size());
 
             for (Row row_temp : sheet) {
                 contRenglones++;
+                total_aciertos = 0;
 
                 try {
                     //Omitimos los dos primeros renglones (nombres_variables y clave_respuesta)
@@ -1059,7 +1061,9 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                         }
 
                         alumno.setAciertos(califica(alumno, j));
-                        alumnos.add(alumno);                    
+                        alumnos.add(alumno); 
+                        
+                        total_aciertos += alumno.getAciertos();
                     }                
 
                 } catch (IllegalStateException ex) {
@@ -1068,7 +1072,11 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
                 }
 
             }
+            double promedio_estatal = (total_aciertos/contRenglones);
+            double porcentaje_aciertos_estatal = promedio_estatal/this.modelosExamenes.get(j).getNumero_de_items();
             
+            this.modelosExamenes.get(j).setPromedio_estatal(promedio_estatal);
+            this.modelosExamenes.get(j).setPorcentaje_aciertos_estatal(porcentaje_aciertos_estatal);
             this.modelosExamenes.get(j).setAlumnos(alumnos);
             this.modelosExamenes.get(j).setOpcionesRespuesta(opcionesRespuesta);            
         }
@@ -1156,7 +1164,18 @@ public final class CargarDatosExcel extends javax.swing.JDialog {
             }
             
             this.modelosExamenes.get(k).setAlumnosOrdenada(alumnosOrdenada);
-        }        
+        }     
+        
+        int j=0;
+        
+        System.out.println(this.modelosExamenes.get(1).getNombreModelo());
+        
+        for (Alumno a : this.modelosExamenes.get(1).getAlumnosOrdenada()) {
+            j++;            
+            System.out.println(j + ", " + a.getId() + ", " + a.getAciertos());
+            
+            //System.out.println(alumnosOrdenada.size());
+        }
     }
 
     private void calculaRango() {

@@ -33,6 +33,8 @@ public class ModeloExamen {
     private int rango_maximo = 0;
     private int numero_de_items = 0;
     private int numero_de_examinados = 0;
+    private double promedio_estatal = 0;
+    private double porcentaje_aciertos_estatal = 0;
     
     //Variables del análisis psicométrico
     double[] dificultad_reactivos;
@@ -56,6 +58,20 @@ public class ModeloExamen {
     private List<Integer>[] caract_frecuencias_distractores;
     private List<JFreeChart> caract_graficas;
     
+    //Variables del análisis de Resultados generales por variables de contexto
+    private String[] porContexto_variables_seleccionadas;        
+    private List<String>[] porContexto_opciones_respuesta;
+    private List<Double>[] porContexto_promedio_distractores;
+    private List<Double>[] porContexto_porcentaje_distractores;    
+    private List<JFreeChart> porContexto_graficas;
+    
+    //Variables del análisis de Resultados generales por unidad de aprendizaje por variables de contexto
+    private String[] unidadPorContexto_variables_seleccionadas;        
+    private List<String>[][] unidadPorContexto_opciones_respuesta;
+    private List<Double>[][] unidadPorContexto_promedio_distractores;
+    private List<Double>[][] unidadPorContexto_porcentaje_distractores;    
+    private List<JFreeChart> unidadPorContexto_graficas;
+    
     //Variables de constructor de unidad de aprendizaje
     private List<UnidadAprendizaje> unidades_aprendizaje;
     
@@ -71,7 +87,8 @@ public class ModeloExamen {
     //por municipio
     private List<String> opciones_respuesta_municipio;
     private List<Double> puntaje_promedio_municipio;
-    private List<Double> porcentaje_aciertos_municipio;
+    private List<Double> porcentaje_aciertos_municipio;    
+    
     //por zona escolar y municipio
     private List<ZonaEscolar>[] zona_escolar_por_municipio;
     private JFreeChart grafica_rg_municipio;
@@ -91,6 +108,102 @@ public class ModeloExamen {
     private JFreeChart grafica_ua_municipio;
     private List<JFreeChart> graficas_ua_zona_escolar;
 
+    public String[] getUnidadPorContexto_variables_seleccionadas() {
+        return unidadPorContexto_variables_seleccionadas;
+    }
+
+    public void setUnidadPorContexto_variables_seleccionadas(String[] unidadPorContexto_variables_seleccionadas) {
+        this.unidadPorContexto_variables_seleccionadas = unidadPorContexto_variables_seleccionadas;
+    }
+
+    public List<String>[][] getUnidadPorContexto_opciones_respuesta() {
+        return unidadPorContexto_opciones_respuesta;
+    }
+
+    public void setUnidadPorContexto_opciones_respuesta(List<String>[][] unidadPorContexto_opciones_respuesta) {
+        this.unidadPorContexto_opciones_respuesta = unidadPorContexto_opciones_respuesta;
+    }
+
+    public List<Double>[][] getUnidadPorContexto_promedio_distractores() {
+        return unidadPorContexto_promedio_distractores;
+    }
+
+    public void setUnidadPorContexto_promedio_distractores(List<Double>[][] unidadPorContexto_promedio_distractores) {
+        this.unidadPorContexto_promedio_distractores = unidadPorContexto_promedio_distractores;
+    }
+
+    public List<Double>[][] getUnidadPorContexto_porcentaje_distractores() {
+        return unidadPorContexto_porcentaje_distractores;
+    }
+
+    public void setUnidadPorContexto_porcentaje_distractores(List<Double>[][] unidadPorContexto_porcentaje_distractores) {
+        this.unidadPorContexto_porcentaje_distractores = unidadPorContexto_porcentaje_distractores;
+    }
+
+    public List<JFreeChart> getUnidadPorContexto_graficas() {
+        return unidadPorContexto_graficas;
+    }
+
+    public void setUnidadPorContexto_graficas(List<JFreeChart> unidadPorContexto_graficas) {
+        this.unidadPorContexto_graficas = unidadPorContexto_graficas;
+    }        
+    
+    public String[] getPorContexto_variables_seleccionadas() {
+        return porContexto_variables_seleccionadas;
+    }
+
+    public void setPorContexto_variables_seleccionadas(String[] porContexto_variables_seleccionadas) {
+        this.porContexto_variables_seleccionadas = porContexto_variables_seleccionadas;
+    }
+
+    public List<String>[] getPorContexto_opciones_respuesta() {
+        return porContexto_opciones_respuesta;
+    }
+
+    public void setPorContexto_opciones_respuesta(List<String>[] porContexto_opciones_respuesta) {
+        this.porContexto_opciones_respuesta = porContexto_opciones_respuesta;
+    }
+
+    public List<Double>[] getPorContexto_promedio_distractores() {
+        return porContexto_promedio_distractores;
+    }
+
+    public void setPorContexto_promedio_distractores(List<Double>[] porContexto_promedio_distractores) {
+        this.porContexto_promedio_distractores = porContexto_promedio_distractores;
+    }
+
+    public List<Double>[] getPorContexto_porcentaje_distractores() {
+        return porContexto_porcentaje_distractores;
+    }
+
+    public void setPorContexto_porcentaje_distractores(List<Double>[] porContexto_porcentaje_distractores) {
+        this.porContexto_porcentaje_distractores = porContexto_porcentaje_distractores;
+    }
+
+    public List<JFreeChart> getPorContexto_graficas() {
+        return porContexto_graficas;
+    }
+
+    public void setPorContexto_graficas(List<JFreeChart> porContexto_graficas) {
+        this.porContexto_graficas = porContexto_graficas;
+    }
+
+    public double getPromedio_estatal() {
+        return promedio_estatal;
+    }
+
+    public void setPromedio_estatal(double promedio_estatal) {
+        this.promedio_estatal = promedio_estatal;
+    }
+
+    public double getPorcentaje_aciertos_estatal() {
+        return porcentaje_aciertos_estatal;
+    }
+
+    public void setPorcentaje_aciertos_estatal(double porcentaje_aciertos_estatal) {
+        this.porcentaje_aciertos_estatal = porcentaje_aciertos_estatal;
+    }    
+    
     public List<JFreeChart> getGraficas_ua_zona_escolar() {
         return graficas_ua_zona_escolar;
     }

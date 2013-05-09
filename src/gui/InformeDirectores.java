@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -35,6 +36,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class InformeDirectores extends javax.swing.JInternalFrame {
 
+    private JDesktopPane jDesktopPane1;
     private List<ModeloExamen> modelosExamenes;
     private String modelo;
     private String municipio;
@@ -71,13 +73,14 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
      */
     public InformeDirectores(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {
         this.modelosExamenes = modelosExamenes;
+        this.jDesktopPane1 = jDesktopPane1;
+        
         initComponents();
         
         llenarSelects();
         
         this.jDialog1.pack();
-        this.jDialog1.setLocationRelativeTo(null);
-        this.jDialog1.setVisible(true);
+        this.jDialog1.setLocationRelativeTo(null);        
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -541,7 +544,13 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         pintarResultados();
 
         this.jDialog1.setVisible(false);
-        this.setVisible(true);
+        
+        Dimension desktopSize = jDesktopPane1.getSize();
+        Dimension jInternalFrameSize = this.getSize();
+
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
+        this.toFront();
+        this.show(); 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
@@ -605,11 +614,11 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         // customise the renderer...
         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
         //renderer.setDrawShapes(true);            
-        renderer.setMaximumBarWidth(.2);   
+        renderer.setMaximumBarWidth(.12);   
         renderer.setItemMargin(.015);
 
         for(Turno tur : this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas().get(i_escuela).getTurnos()) {
-            for(int j=0; j<tur.getGrupos().size(); j++) {  
+            for(int j=0; j<dataset.getRowCount(); j++) {  
                 renderer.setSeriesPaint(j, colores[j]);
                 renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
                 renderer.setSeriesItemLabelsVisible(j, true);                        
@@ -651,7 +660,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         // customise the renderer...
         final BarRenderer renderer = (BarRenderer) plot.getRenderer();        
         //renderer.setDrawShapes(true);            
-        renderer.setMaximumBarWidth(.2);   
+        renderer.setMaximumBarWidth(.12);   
         renderer.setItemMargin(.015);
 
         int j=0;
@@ -705,14 +714,15 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
             renderer.setSeriesPaint(0, new Color(79, 129, 189));
             renderer.setMaximumBarWidth(.15);
             renderer.setItemMargin(.02);
-
-            renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
-            renderer.setSeriesItemLabelsVisible(0, true);                        
-            renderer.setSeriesVisible(0, true);
-
-            renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
-            renderer.setSeriesItemLabelsVisible(1, true);                        
-            renderer.setSeriesVisible(1, true);                    
+                       
+            for(int i=0; i<this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().size(); i++) {
+                for(int j=0; j<dataset.getRowCount(); j++) {  
+                    renderer.setSeriesPaint(j, colores[j]);
+                    renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
+                    renderer.setSeriesItemLabelsVisible(j, true);                        
+                    renderer.setSeriesVisible(j, true);
+                }
+            }
 
             plot.setRenderer(renderer);
             
@@ -752,13 +762,14 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         renderer.setMaximumBarWidth(.15);
         renderer.setItemMargin(.02);
 
-        renderer.setSeriesItemLabelGenerator(0, new StandardCategoryItemLabelGenerator());
-        renderer.setSeriesItemLabelsVisible(0, true);                        
-        renderer.setSeriesVisible(0, true);
-
-        renderer.setSeriesItemLabelGenerator(1, new StandardCategoryItemLabelGenerator());
-        renderer.setSeriesItemLabelsVisible(1, true);                        
-        renderer.setSeriesVisible(1, true);                    
+        for(int i=0; i<this.modelosExamenes.get(i_modelo).getUnidades_aprendizaje().size(); i++) {
+            for(int j=0; j<dataset.getRowCount(); j++) {  
+                renderer.setSeriesPaint(j, colores[j]);
+                renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
+                renderer.setSeriesItemLabelsVisible(j, true);                        
+                renderer.setSeriesVisible(j, true);
+            }
+        }                    
 
         plot.setRenderer(renderer);
     }
@@ -773,15 +784,15 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         if (dir.mkdirs()) {                                                                                               
             
             try {                        
-                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grupos_escuela.PNG"), grafica_grupos_escuela, 500, 300);                                                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grupos_escuela.PNG"), grafica_grupos_escuela, 700, 300);                                                
                 
-                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona.PNG"), grafica_escuelas_zona, 500, 300);                                                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona.PNG"), grafica_escuelas_zona, 700, 300);                                                
                 
                 for(int i=0; i<this.graficas_turnos_ua.size(); i++) {
-                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 500, 300);                                                
+                    ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\grafica_ua" + i + ".PNG"), graficas_turnos_ua.get(i), 700, 300);                                                
                 }
                 
-                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona_ua.PNG"), grafica_escuelas_zona_ua, 500, 300);                                                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_directores\\escuelas_zona_ua.PNG"), grafica_escuelas_zona_ua, 700, 300);                                                
                 
             } catch (java.io.IOException exc) {
                 JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
@@ -823,16 +834,16 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
     private void pintarResultados() {
         DecimalFormat df = new DecimalFormat("0.000");
         
-        String out = "<table align\"center\" width=\"80%\" border=\"0\" cellspacing=\"10px\" cellpadding=\"0\">";
+        String out = "<table align\"center\" width=\"800px\" border=\"1\" cellspacing=\"10px\" cellpadding=\"0\">";
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados generales para Directores.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><img src=\"file:imagenes_apoyo/directores.png\" border=\"0\"></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
-        out = out + "<table align=\"center\" width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
+        out = out + "<table align=\"center\" width=\"600px\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
         out = out + "<td>La Escuela <strong>" + this.escuela + "</strong> tiene una media de aciertos de <strong>" + df.format(this.promedio_escuela) + "</strong>, la cual es " + getTextoCompEscuelaZona() + " a la media de su zona escolar. <br />En la Zona Escolar <strong>" + this.zona_escolar + "</strong> del municipio de <strong>" + this.municipio + "</strong> la media de puntaje global fue de <strong>" + df.format(this.promedio_zona) + "</strong>. <br /></td>";        
         out = out + "</tr>";
@@ -848,7 +859,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de los grupos de la escuela seleccionada
         out = out +
-                "<table align=\"center\" width=\"50%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"500px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 1. Resultados generales de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
 
@@ -903,7 +914,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos gráfica de los grupos de una escuela.
         String nombreArchivo = "\"file:temp/inf_directores/grupos_escuela.PNG\"";
-        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
         out = out + "<br /><br />";
 
         //cerramos renglón de tabla principal                
@@ -916,7 +927,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes de las escuelas de la zona seleccionada
         out = out +
-                "<table align=\"center\" width=\"50%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"500px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 2. Resultados generales de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
         
@@ -954,7 +965,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos gráfica de los grupos de una escuela.
         nombreArchivo = "\"file:temp/inf_directores/escuelas_zona.PNG\"";
-        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
         out = out + "<br /><br />";
 
         //cerramos renglón de tabla principal                
@@ -963,14 +974,14 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
                                 
         //Informe de resultados por unidad de aprendizaje para Directores.
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados por unidad de aprendizaje para Directores.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><h2>Informe de resultados por unidad de aprendizaje para Directores.</h2></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
-        out = out + "<table align=\"center\" width=\"65%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
+        out = out + "<table align=\"center\" width=\"700px\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
         out = out + "<td>Los resultados que se presentan son los promedios totales y porcentuales de cada unidad de aprendizaje desagregados por zona escolar, escuela, turno y grupos de la población estudiantil examinada. <br />El n&uacute;mero de &iacute;tems de cada unidad de aprendizaje son: <br />" + getListaUnidadAprendizaje() + "</td>";        
         out = out + "</tr>";
@@ -986,7 +997,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes por unidad de aprendizaje de los grupos de la escuela seleccionada
         out = out +
-                "<table align=\"center\" width=\"65%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 3. Resultados por unidad de aprendizaje de la escuela " + this.escuela + " de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
 
@@ -1076,7 +1087,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
 
             //Imprimimos gráfica de los grupos de una escuela.
             nombreArchivo = "\"file:temp/inf_directores/grafica_ua" + i + ".PNG\"";
-            out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+            out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
             out = out + "<br /><br />";
 
             //cerramos renglón de tabla principal                
@@ -1090,7 +1101,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos la tabla con los puntajes por unidad de aprendizaje de las escuelas de la zona seleccionada
         out = out +
-                "<table align=\"center\" width=\"65%\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
+                "<table align=\"center\" width=\"700px\" border=\"1\" cellspacing=\"0\" cellpadding=\"0\">"                 
                 + "<caption style=\"text-align:left; font-weight:bold; font-size: 9px;\">Tabla 4. Resultados por unidad de aprendizaje de la zona escolar " + this.zona_escolar + " del municipio de " + this.municipio + ".</caption>"
                 + "<tr>";
                 
@@ -1156,7 +1167,7 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         //Imprimimos gráfica de los grupos de una escuela.
         nombreArchivo = "\"file:temp/inf_directores/escuelas_zona_ua.PNG\"";
-        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<img src=" + nombreArchivo + " width=\"700\" height=\"300\" border=\"0\">";
         out = out + "<br /><br />";
 
         //cerramos renglón de tabla principal                
@@ -1235,4 +1246,13 @@ public class InformeDirectores extends javax.swing.JInternalFrame {
         
         this.combo_turno.setModel(model_turno);
     }
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.jDialog1.setVisible(true);
+    }
+        
 }

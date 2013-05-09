@@ -230,7 +230,7 @@ public class ConstructorUnidadDeAprendizaje extends javax.swing.JDialog {
             System.out.println(n);
         }
         
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void listaItemsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listaItemsValueChanged

@@ -4,6 +4,19 @@
  */
 package gui;
 
+import java.awt.Desktop;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -12,6 +25,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author UEE
  */
 public class Parrerc extends javax.swing.JFrame {
+    static MessageFormat head = new MessageFormat("");
+    static MessageFormat foot = new MessageFormat("");
     private CargarDatosExcel cd;
     private ItemAnalisis ia;
     private PAGI pagi;
@@ -19,10 +34,16 @@ public class Parrerc extends javax.swing.JFrame {
     private Caracterizacion caracterizar;
     private ResultadosPorUnidadAprendizaje resPorUnidad;
     private ResultadosGenerales resGenerales;
+    private ResultadosGeneralesPorContexto resPorContexto;
+    private ConstructorUnidadDeAprendizaje define_unidades;
+    private ResultadosUnidadPorContexto resUnidadPorContexto;
     private InformePadresAlumnos infAlumnnos;
     private InformeDocentes infDocentes;
     private InformeDirectores infDirectores;
     private InformeInspectores infInspectores;
+    private InformePlaneacion infPlaneacion;
+    private InformeSecretario infSecretario;    
+    
 
     /**
      * Creates new form Parrerc
@@ -42,16 +63,28 @@ public class Parrerc extends javax.swing.JFrame {
     private void initComponents() {
 
         fileChooser = new javax.swing.JFileChooser();
+        d_acerca = new javax.swing.JDialog();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
         miCargarBD = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        miGuardarAnalisis = new javax.swing.JMenuItem();
-        miGuardarReporte = new javax.swing.JMenuItem();
+        miAbrirProyecto = new javax.swing.JMenuItem();
+        miGuardarProyecto = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miImprimirAnalisis = new javax.swing.JMenuItem();
-        miImpirmirReporte = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         miSalir = new javax.swing.JMenuItem();
         menuPsicometricos = new javax.swing.JMenu();
@@ -80,8 +113,113 @@ public class Parrerc extends javax.swing.JFrame {
         fileChooser.setDialogTitle("Cargar Base de Datos");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos de Excel (.xls, xlsx)", "xls", "xlsx"));
 
+        d_acerca.setTitle("Programa para el análisis y reporte de resultados de exámenes de referencia criterial 1.0");
+        d_acerca.setBounds(new java.awt.Rectangle(0, 0, 470, 390));
+        d_acerca.setModal(true);
+        d_acerca.setResizable(false);
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/images/logo_splash_about.png"))); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setText("Versión:");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("Autores:");
+
+        jLabel5.setText("1.0");
+
+        jLabel6.setText("Contreras Niño Luis Ángel");
+
+        jLabel7.setText("Castañeda Sánchez Cristian Ernesto");
+
+        jLabel8.setText("Urias Luzanilla Erick");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel9.setText("Licencia:");
+
+        jLabel10.setText("<html>Este obra está bajo una <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/3.0/deed.es_ES\">licencia de Creative Commons Reconocimiento-NoComercial-CompartirIgual 3.0 Unported.</a>");
+        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel10MouseClicked(evt);
+            }
+        });
+
+        jButton1.setText("Cerrar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gui/images/88x31.png"))); // NOI18N
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout d_acercaLayout = new javax.swing.GroupLayout(d_acerca.getContentPane());
+        d_acerca.getContentPane().setLayout(d_acercaLayout);
+        d_acercaLayout.setHorizontalGroup(
+            d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(d_acercaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(d_acercaLayout.createSequentialGroup()
+                        .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(d_acercaLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(d_acercaLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        d_acercaLayout.setVerticalGroup(
+            d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(d_acercaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(d_acercaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(48, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Programa de Análisis y Reportes de Examenes Criteriales.");
+        setTitle("Programa para el análisis y reporte de resultados de exámenes de referencia criterial");
+        setIconImage(new ImageIcon(getClass().getResource("/gui/images/logo_splash_ico.png")).getImage());
 
         menuArchivo.setText("Archivo");
 
@@ -94,23 +232,28 @@ public class Parrerc extends javax.swing.JFrame {
         menuArchivo.add(miCargarBD);
         menuArchivo.add(jSeparator1);
 
-        miGuardarAnalisis.setText("Guardar análisis");
-        miGuardarAnalisis.addActionListener(new java.awt.event.ActionListener() {
+        miAbrirProyecto.setText("Abrir proyecto");
+        miAbrirProyecto.setEnabled(false);
+        miAbrirProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miGuardarAnalisisActionPerformed(evt);
+                miAbrirProyectoActionPerformed(evt);
             }
         });
-        menuArchivo.add(miGuardarAnalisis);
+        menuArchivo.add(miAbrirProyecto);
 
-        miGuardarReporte.setText("Guardar reporte");
-        menuArchivo.add(miGuardarReporte);
+        miGuardarProyecto.setText("Guardar proyecto");
+        miGuardarProyecto.setEnabled(false);
+        menuArchivo.add(miGuardarProyecto);
         menuArchivo.add(jSeparator2);
 
-        miImprimirAnalisis.setText("Imprimir análisis");
+        miImprimirAnalisis.setText("Imprimir");
+        miImprimirAnalisis.setEnabled(false);
+        miImprimirAnalisis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miImprimirAnalisisActionPerformed(evt);
+            }
+        });
         menuArchivo.add(miImprimirAnalisis);
-
-        miImpirmirReporte.setText("Imprimir reporte");
-        menuArchivo.add(miImpirmirReporte);
         menuArchivo.add(jSeparator3);
 
         miSalir.setText("Salir");
@@ -126,6 +269,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuPsicometricos.setText("Análisis psicométricos");
 
         miAnalisisItems.setText("Análisis de ítems");
+        miAnalisisItems.setEnabled(false);
         miAnalisisItems.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miAnalisisItemsActionPerformed(evt);
@@ -134,6 +278,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuPsicometricos.add(miAnalisisItems);
 
         miPAGI.setText("Análisis gráfico de ítems");
+        miPAGI.setEnabled(false);
         miPAGI.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miPAGIActionPerformed(evt);
@@ -142,6 +287,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuPsicometricos.add(miPAGI);
 
         miAnalisisVersionesPrueba.setText("Análisis de versiones de la prueba");
+        miAnalisisVersionesPrueba.setEnabled(false);
         miAnalisisVersionesPrueba.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miAnalisisVersionesPruebaActionPerformed(evt);
@@ -154,6 +300,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.setText("Análisis de resultados");
 
         miCaracExaminados.setText("Caracterización de examinados");
+        miCaracExaminados.setEnabled(false);
         miCaracExaminados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miCaracExaminadosActionPerformed(evt);
@@ -162,6 +309,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.add(miCaracExaminados);
 
         miResultadosGenerales.setText("Resultados generales");
+        miResultadosGenerales.setEnabled(false);
         miResultadosGenerales.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miResultadosGeneralesActionPerformed(evt);
@@ -170,6 +318,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.add(miResultadosGenerales);
 
         miResultadosPorUnidadAprendizaje.setText("Resultados por unidad de aprendizaje");
+        miResultadosPorUnidadAprendizaje.setEnabled(false);
         miResultadosPorUnidadAprendizaje.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miResultadosPorUnidadAprendizajeActionPerformed(evt);
@@ -178,9 +327,21 @@ public class Parrerc extends javax.swing.JFrame {
         menuAnalisisResultados.add(miResultadosPorUnidadAprendizaje);
 
         miResultadosGeneralesVC.setText("Resultados generales contra variables de contexto");
+        miResultadosGeneralesVC.setEnabled(false);
+        miResultadosGeneralesVC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miResultadosGeneralesVCActionPerformed(evt);
+            }
+        });
         menuAnalisisResultados.add(miResultadosGeneralesVC);
 
         miResultadosUnidadApendizajeVC.setText("Resultados por unidad de aprendizaje contra variables de contexto");
+        miResultadosUnidadApendizajeVC.setEnabled(false);
+        miResultadosUnidadApendizajeVC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miResultadosUnidadApendizajeVCActionPerformed(evt);
+            }
+        });
         menuAnalisisResultados.add(miResultadosUnidadApendizajeVC);
 
         jMenuBar1.add(menuAnalisisResultados);
@@ -188,6 +349,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.setText("Reporte de resultados");
 
         miReporteEstudiantesYPadres.setText("Reporte para estudiantes y padres");
+        miReporteEstudiantesYPadres.setEnabled(false);
         miReporteEstudiantesYPadres.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miReporteEstudiantesYPadresActionPerformed(evt);
@@ -196,6 +358,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteEstudiantesYPadres);
 
         miReporteDocentes.setText("Reporte para el docente");
+        miReporteDocentes.setEnabled(false);
         miReporteDocentes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miReporteDocentesActionPerformed(evt);
@@ -204,6 +367,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteDocentes);
 
         miReporteDirectores.setText("Reporte para el director");
+        miReporteDirectores.setEnabled(false);
         miReporteDirectores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miReporteDirectoresActionPerformed(evt);
@@ -212,6 +376,7 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteDirectores);
 
         miReporteInspectores.setText("Reporte para el inspector");
+        miReporteInspectores.setEnabled(false);
         miReporteInspectores.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 miReporteInspectoresActionPerformed(evt);
@@ -220,9 +385,21 @@ public class Parrerc extends javax.swing.JFrame {
         menuReporteResultados.add(miReporteInspectores);
 
         miPlaneadorEducativo.setText("Reporte para el planeador educativo");
+        miPlaneadorEducativo.setEnabled(false);
+        miPlaneadorEducativo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miPlaneadorEducativoActionPerformed(evt);
+            }
+        });
         menuReporteResultados.add(miPlaneadorEducativo);
 
         miReporteSecretarioEducacion.setText("Reporte para el secretario de educación");
+        miReporteSecretarioEducacion.setEnabled(false);
+        miReporteSecretarioEducacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miReporteSecretarioEducacionActionPerformed(evt);
+            }
+        });
         menuReporteResultados.add(miReporteSecretarioEducacion);
 
         jMenuBar1.add(menuReporteResultados);
@@ -230,9 +407,19 @@ public class Parrerc extends javax.swing.JFrame {
         menuAyuda.setText("Ayuda");
 
         miAyudaGeneral.setText("Ayuda General");
+        miAyudaGeneral.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAyudaGeneralActionPerformed(evt);
+            }
+        });
         menuAyuda.add(miAyudaGeneral);
 
         miAcercaDe.setText("Acerca de PARRERC");
+        miAcercaDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAcercaDeActionPerformed(evt);
+            }
+        });
         menuAyuda.add(miAcercaDe);
 
         jMenuBar1.add(menuAyuda);
@@ -257,9 +444,9 @@ public class Parrerc extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void miGuardarAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGuardarAnalisisActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_miGuardarAnalisisActionPerformed
+    private void miAbrirProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAbrirProyectoActionPerformed
+        
+    }//GEN-LAST:event_miAbrirProyectoActionPerformed
 
     private void miSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSalirActionPerformed
         this.dispose();
@@ -275,69 +462,284 @@ public class Parrerc extends javax.swing.JFrame {
             
             cd.setLocationRelativeTo(this);
             cd.setVisible(true);
+            
+            miAnalisisItems.setEnabled(true);
+            miCaracExaminados.setEnabled(true);    
+            
+            miImprimirAnalisis.setEnabled(false);
+            miPAGI.setEnabled(false);
+            miAnalisisVersionesPrueba.setEnabled(false);
+            miResultadosGenerales.setEnabled(false);
+            miResultadosPorUnidadAprendizaje.setEnabled(false);
+            miResultadosGeneralesVC.setEnabled(false);
+            miResultadosUnidadApendizajeVC.setEnabled(false);
+            miReporteEstudiantesYPadres.setEnabled(false);
+            miReporteDocentes.setEnabled(false);
+            miReporteDirectores.setEnabled(false);
+            miReporteInspectores.setEnabled(false);
+            miPlaneadorEducativo.setEnabled(false);
+            miReporteSecretarioEducacion.setEnabled(false);
         }
     }//GEN-LAST:event_miCargarBDActionPerformed
 
     private void miAnalisisItemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAnalisisItemsActionPerformed
         /*ia = new ItemAnalisis(cd.getAlumnosOrdenada(), cd.getVariables().subList(cd.getIndice_inicio_items(), cd.getIndice_fin_items()), cd.getClavesRespuesta(), cd.getOpcionesRespuesta(), cd.getIndice_inicio_items());        */
         ia = new ItemAnalisis(cd.getModelosExamenes(), this.jDesktopPane1);        
-        this.jDesktopPane1.add(ia); 
-        this.jDesktopPane1.setSelectedFrame(ia);
+        this.jDesktopPane1.add(ia);         
+        ia.mostrar();
+        
+        miPAGI.setEnabled(true);
+        miAnalisisVersionesPrueba.setEnabled(true);
+        miImprimirAnalisis.setEnabled(true);
     }//GEN-LAST:event_miAnalisisItemsActionPerformed
 
     private void miPAGIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miPAGIActionPerformed
         pagi = new PAGI(cd.getModelosExamenes(), this.jDesktopPane1);        
-        this.jDesktopPane1.add(pagi);
-        this.jDesktopPane1.setSelectedFrame(pagi);
+        this.jDesktopPane1.add(pagi); 
+        pagi.mostrar();               
     }//GEN-LAST:event_miPAGIActionPerformed
 
     private void miAnalisisVersionesPruebaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAnalisisVersionesPruebaActionPerformed
         versiones = new AnalisisVersionesPrueba(cd.getModelosExamenes(), this.jDesktopPane1);        
         this.jDesktopPane1.add(versiones);
-        this.jDesktopPane1.setSelectedFrame(versiones);        
+        versiones.mostrar();
+        
+        miResultadosGenerales.setEnabled(true);        
+        miResultadosGeneralesVC.setEnabled(true);        
     }//GEN-LAST:event_miAnalisisVersionesPruebaActionPerformed
 
     private void miCaracExaminadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miCaracExaminadosActionPerformed
         caracterizar = new Caracterizacion(cd.getModelosExamenes(), this.jDesktopPane1);
         this.jDesktopPane1.add(caracterizar);
-        this.jDesktopPane1.setSelectedFrame(caracterizar);           
+        caracterizar.mostrar();
+        
+        miImprimirAnalisis.setEnabled(true);
     }//GEN-LAST:event_miCaracExaminadosActionPerformed
 
     private void miResultadosPorUnidadAprendizajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosPorUnidadAprendizajeActionPerformed
+        
+        if(cd.getModelosExamenes().get(0).getUnidades_aprendizaje()==null) {
+            define_unidades = new ConstructorUnidadDeAprendizaje(cd.getModelosExamenes(), jDesktopPane1);
+        } else {
+            define_unidades.setVisible(true);
+        }
+        
         resPorUnidad = new ResultadosPorUnidadAprendizaje(cd.getModelosExamenes(), this.jDesktopPane1);
         this.jDesktopPane1.add(resPorUnidad);
-        this.jDesktopPane1.setSelectedFrame(resPorUnidad);
+        resPorUnidad.mostrar();
+        
+        miReporteEstudiantesYPadres.setEnabled(true);
+        miReporteDocentes.setEnabled(true);
+        miReporteDirectores.setEnabled(true);
+        miReporteInspectores.setEnabled(true);
+        miPlaneadorEducativo.setEnabled(true);
+        miReporteSecretarioEducacion.setEnabled(true);
     }//GEN-LAST:event_miResultadosPorUnidadAprendizajeActionPerformed
 
     private void miResultadosGeneralesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosGeneralesActionPerformed
         resGenerales = new ResultadosGenerales(cd.getModelosExamenes(), this.jDesktopPane1);
         this.jDesktopPane1.add(resGenerales);
-        this.jDesktopPane1.setSelectedFrame(resGenerales);
+        resGenerales.mostrar();
+        
+        miResultadosPorUnidadAprendizaje.setEnabled(true);
+        miResultadosUnidadApendizajeVC.setEnabled(true);
     }//GEN-LAST:event_miResultadosGeneralesActionPerformed
 
     private void miReporteEstudiantesYPadresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteEstudiantesYPadresActionPerformed
         infAlumnnos = new InformePadresAlumnos(cd.getModelosExamenes(), this.jDesktopPane1);
         this.jDesktopPane1.add(infAlumnnos);
-        this.jDesktopPane1.setSelectedFrame(infAlumnnos);
+        infAlumnnos.mostrar();
     }//GEN-LAST:event_miReporteEstudiantesYPadresActionPerformed
 
     private void miReporteDocentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteDocentesActionPerformed
         infDocentes = new InformeDocentes(cd.getModelosExamenes(), this.jDesktopPane1);       
         this.jDesktopPane1.add(infDocentes);
-        this.jDesktopPane1.setSelectedFrame(infDocentes);
+        infDocentes.mostrar();
     }//GEN-LAST:event_miReporteDocentesActionPerformed
 
     private void miReporteDirectoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteDirectoresActionPerformed
         infDirectores = new InformeDirectores(cd.getModelosExamenes(), this.jDesktopPane1);       
         this.jDesktopPane1.add(infDirectores);
-        this.jDesktopPane1.setSelectedFrame(infDirectores);
+        infDirectores.mostrar();
     }//GEN-LAST:event_miReporteDirectoresActionPerformed
 
     private void miReporteInspectoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteInspectoresActionPerformed
         infInspectores = new InformeInspectores(cd.getModelosExamenes(), this.jDesktopPane1);       
         this.jDesktopPane1.add(infInspectores);
-        this.jDesktopPane1.setSelectedFrame(infInspectores);
+        infInspectores.mostrar();
     }//GEN-LAST:event_miReporteInspectoresActionPerformed
+
+    private void miPlaneadorEducativoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miPlaneadorEducativoActionPerformed
+        infPlaneacion = new InformePlaneacion(cd.getModelosExamenes(), this.jDesktopPane1);       
+        this.jDesktopPane1.add(infPlaneacion);
+        infPlaneacion.mostrar();
+    }//GEN-LAST:event_miPlaneadorEducativoActionPerformed
+
+    private void miImprimirAnalisisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miImprimirAnalisisActionPerformed
+        System.out.println(this.jDesktopPane1.getSelectedFrame().getTitle());
+        PrinterJob pj = PrinterJob.getPrinterJob();
+        
+        
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Análisis de ítems")) {
+            try {
+                this.ia.getPanel_resultados().print(head, foot);                
+            } catch (PrinterException ex) {
+                Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //pj.setPrintable(this.ia.getPanel_resultados().getPrintable(head, foot));                                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Análisis gráfico de ítems")) {
+            pj.setPrintable(this.pagi.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Análisis de versiones de la prueba")) {
+            pj.setPrintable(this.versiones.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Caracterización de los examinados")) {
+            pj.setPrintable(this.caracterizar.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Resultados generales")) {
+            pj.setPrintable(this.resGenerales.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Resultados por Unidad de Aprendizaje")) {
+            pj.setPrintable(this.resPorUnidad.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Resultados generales contra variables de contexto")) {
+            pj.setPrintable(this.resPorContexto.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para alumnos y padres de familia")) {
+            pj.setPrintable(this.infAlumnnos.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para profesores")) {
+            pj.setPrintable(this.infDocentes.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para directores")) {
+            pj.setPrintable(this.infDirectores.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para inspectores de zona escolar")) {
+            pj.setPrintable(this.infInspectores.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para Equipo de planeación didáctica")) {
+            pj.setPrintable(this.infPlaneacion.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        if(this.jDesktopPane1.getSelectedFrame().getTitle().equalsIgnoreCase("Informe de resultados para Secretario de Educación")) {
+            pj.setPrintable(this.infSecretario.getPanel_resultados().getPrintable(head, foot));                                
+        }
+
+        try {
+            Paper p = new Paper();
+            PageFormat pf = new PageFormat();
+            pf.setPaper(p);
+            pj.defaultPage();
+            pj.print();                
+        } catch (PrinterException ex) {
+            Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("done .............. ");
+                        
+    }//GEN-LAST:event_miImprimirAnalisisActionPerformed
+
+    private void miResultadosGeneralesVCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosGeneralesVCActionPerformed
+        resPorContexto = new ResultadosGeneralesPorContexto(cd.getModelosExamenes(), this.jDesktopPane1);
+        this.jDesktopPane1.add(resPorContexto);
+        resPorContexto.mostrar();
+        
+        miResultadosPorUnidadAprendizaje.setEnabled(true);
+        miResultadosUnidadApendizajeVC.setEnabled(true);
+    }//GEN-LAST:event_miResultadosGeneralesVCActionPerformed
+
+    private void miResultadosUnidadApendizajeVCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miResultadosUnidadApendizajeVCActionPerformed
+        if(cd.getModelosExamenes().get(0).getUnidades_aprendizaje()==null) {
+            define_unidades = new ConstructorUnidadDeAprendizaje(cd.getModelosExamenes(), jDesktopPane1);
+        } else {
+            define_unidades.setVisible(true);
+        }
+                        
+        resUnidadPorContexto = new ResultadosUnidadPorContexto(cd.getModelosExamenes(), this.jDesktopPane1);
+        this.jDesktopPane1.add(resUnidadPorContexto);
+        resUnidadPorContexto.mostrar();
+        
+        miReporteEstudiantesYPadres.setEnabled(true);
+        miReporteDocentes.setEnabled(true);
+        miReporteDirectores.setEnabled(true);
+        miReporteInspectores.setEnabled(true);
+        miPlaneadorEducativo.setEnabled(true);
+        miReporteSecretarioEducacion.setEnabled(true);
+    }//GEN-LAST:event_miResultadosUnidadApendizajeVCActionPerformed
+
+    private void miReporteSecretarioEducacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miReporteSecretarioEducacionActionPerformed
+        infSecretario = new InformeSecretario(cd.getModelosExamenes(), this.jDesktopPane1);       
+        this.jDesktopPane1.add(infSecretario);
+        infSecretario.mostrar();
+    }//GEN-LAST:event_miReporteSecretarioEducacionActionPerformed
+
+    private void miAcercaDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAcercaDeActionPerformed
+        this.d_acerca.pack();
+        this.d_acerca.setLocationRelativeTo(this);
+        this.d_acerca.setVisible(true);
+    }//GEN-LAST:event_miAcercaDeActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.d_acerca.setVisible(false);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void miAyudaGeneralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAyudaGeneralActionPerformed
+        
+        if( f == null ) {
+            f = new File( "docs/Ayuda.pdf" );                
+        }
+
+        try {
+            Desktop.getDesktop().open(f);
+        } catch (IOException ex) {
+            Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
+        }            
+        
+    }//GEN-LAST:event_miAyudaGeneralActionPerformed
+
+    private void jLabel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel10MouseClicked
+        
+        if(Desktop.isDesktopSupported()) {
+            Desktop des = Desktop.getDesktop();
+            try {
+                try {
+                    des.browse(new URI("http://creativecommons.org/licenses/by-nc-sa/3.0/deed.es_ES"));
+                } catch (IOException ex) {
+                    Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jLabel10MouseClicked
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        if(Desktop.isDesktopSupported()) {
+            Desktop des = Desktop.getDesktop();
+            try {
+                try {
+                    des.browse(new URI("http://creativecommons.org/licenses/by-nc-sa/3.0/deed.es_ES"));
+                } catch (IOException ex) {
+                    Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(Parrerc.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -365,6 +767,12 @@ public class Parrerc extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Parrerc.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        try {
+            Thread.currentThread().sleep(2000);
+        } catch (InterruptedException ex) {
+            
+        }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -374,9 +782,22 @@ public class Parrerc extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JDialog d_acerca;
     private javax.swing.JFileChooser fileChooser;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -385,15 +806,14 @@ public class Parrerc extends javax.swing.JFrame {
     private javax.swing.JMenu menuAyuda;
     private javax.swing.JMenu menuPsicometricos;
     private javax.swing.JMenu menuReporteResultados;
+    private javax.swing.JMenuItem miAbrirProyecto;
     private javax.swing.JMenuItem miAcercaDe;
     private javax.swing.JMenuItem miAnalisisItems;
     private javax.swing.JMenuItem miAnalisisVersionesPrueba;
     private javax.swing.JMenuItem miAyudaGeneral;
     private javax.swing.JMenuItem miCaracExaminados;
     private javax.swing.JMenuItem miCargarBD;
-    private javax.swing.JMenuItem miGuardarAnalisis;
-    private javax.swing.JMenuItem miGuardarReporte;
-    private javax.swing.JMenuItem miImpirmirReporte;
+    private javax.swing.JMenuItem miGuardarProyecto;
     private javax.swing.JMenuItem miImprimirAnalisis;
     private javax.swing.JMenuItem miPAGI;
     private javax.swing.JMenuItem miPlaneadorEducativo;
@@ -408,4 +828,6 @@ public class Parrerc extends javax.swing.JFrame {
     private javax.swing.JMenuItem miResultadosUnidadApendizajeVC;
     private javax.swing.JMenuItem miSalir;
     // End of variables declaration//GEN-END:variables
+
+    private File f;
 }

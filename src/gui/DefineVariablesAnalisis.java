@@ -58,12 +58,16 @@ public class DefineVariablesAnalisis extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        check_municipio.setSelected(true);
         check_municipio.setText("Por municipio");
 
+        check_zona_escolar.setSelected(true);
         check_zona_escolar.setText("Por zona escolar");
 
+        check_escuela.setSelected(true);
         check_escuela.setText("Por escuela");
 
+        check_grupo.setSelected(true);
         check_grupo.setText("Por grupo");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -96,6 +100,7 @@ public class DefineVariablesAnalisis extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        check_mostrar_graficas.setSelected(true);
         check_mostrar_graficas.setText("Mostrar gráficas");
 
         check_desplegar_anova.setText("Desplegar tabla de ANOVA (Análisis de varianza)");

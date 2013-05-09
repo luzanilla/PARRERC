@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 
 /**
  *
@@ -39,7 +40,6 @@ public class AnalisisVersionesPrueba extends javax.swing.JInternalFrame {
         Dimension jInternalFrameSize = this.getSize();
 
         this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
-        this.setVisible(true);
     }
 
     /**
@@ -204,4 +204,14 @@ public class AnalisisVersionesPrueba extends javax.swing.JInternalFrame {
 
         this.panel_resultados.setText(out); 
     }
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.toFront();
+        this.show();
+    }
+        
 }

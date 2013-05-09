@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDesktopPane;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -33,6 +34,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class InformeInspectores extends javax.swing.JInternalFrame {
 
+    private JDesktopPane jDesktopPane1;
     private Color[] colores = {new Color(79, 129, 189), new Color(246, 192, 29), new Color(142, 188, 8), new Color(255, 145, 75), new Color(216, 81, 81), new Color(149, 81, 149), new Color(93, 137, 45), new Color(10, 146, 146)};
     private List<ModeloExamen> modelosExamenes;
     
@@ -60,13 +62,14 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
      */
     public InformeInspectores(List<ModeloExamen> modelosExamenes, JDesktopPane jDesktopPane1) {
         this.modelosExamenes = modelosExamenes;
+        this.jDesktopPane1 = jDesktopPane1;
+        
         initComponents();
         
         llenarSelects();
         
         this.jDialog1.pack();
         this.jDialog1.setLocationRelativeTo(null);
-        this.jDialog1.setVisible(true);
         
         Dimension desktopSize = jDesktopPane1.getSize();
         Dimension jInternalFrameSize = this.getSize();
@@ -378,7 +381,13 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
         pintarResultados();
 
         this.jDialog1.setVisible(false);
-        this.setVisible(true);
+        
+        Dimension desktopSize = jDesktopPane1.getSize();
+        Dimension jInternalFrameSize = this.getSize();
+
+        this.setLocation((desktopSize.width - jInternalFrameSize.width)/2, (desktopSize.height- jInternalFrameSize.height)/2);
+        this.toFront();
+        this.show(); 
     }//GEN-LAST:event_botonAceptarActionPerformed
 
     private void botonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonCancelarActionPerformed
@@ -447,8 +456,10 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
         renderer.setMaximumBarWidth(.2);   
         renderer.setItemMargin(.015);
 
+        
+        
         for(Escuela esc : this.modelosExamenes.get(i_modelo).getZona_escolar_por_municipio()[i_municipio].get(i_zona_escolar).getEscuelas()) {
-            for(int j=0; j<esc.getTurnos().size(); j++) {  
+            for(int j=0; j<dataset.getRowCount(); j++) {  
                 renderer.setSeriesPaint(j, colores[j]);
                 renderer.setSeriesItemLabelGenerator(j, new StandardCategoryItemLabelGenerator());
                 renderer.setSeriesItemLabelsVisible(j, true);                        
@@ -623,7 +634,7 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
                     ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_inspectores\\escuelas_zona_ua" + i + ".PNG"), graficas_zona_ua.get(i), 500, 300);                                                
                 }
                 
-                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_inspectores\\zonas_municpio_ua.PNG"), grafica_municipio_ua, 500, 300);                                                
+                ChartUtilities.saveChartAsPNG(new java.io.File("temp\\inf_inspectores\\zonas_municpio_ua.PNG"), grafica_municipio_ua, 550, 350);                                                
                 
             } catch (java.io.IOException exc) {
                 JOptionPane.showMessageDialog(this, "Error al guardar las imagenes.", "Error", JOptionPane.ERROR_MESSAGE);                            
@@ -639,14 +650,14 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
     private void pintarResultados() {
         DecimalFormat df = new DecimalFormat("0.000");
         
-        String out = "<table align\"center\" width=\"80%\" border=\"0\" cellspacing=\"10px\" cellpadding=\"0\">";
+        String out = "<table align\"center\" width=\"80%\" border=\"1\" cellspacing=\"10px\" cellpadding=\"0\">";
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados generales para Inspectores de zona escolar.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><img src=\"file:imagenes_apoyo/inspectores.png\" border=\"0\"></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
         out = out + "<table align=\"center\" width=\"60%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
@@ -779,12 +790,12 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
                                 
         //Informe de resultados por unidad de aprendizaje para Directores.
         out = out + "<tr>"
-                    + "<th scope=\"col\"><h2>Informe de resultados por unidad de aprendizaje para Inspectores de zona escolar.</h2></th>"
+                    + "<th scope=\"col\" style=\"border:0;\"><h2>Informe de resultados por unidad de aprendizaje para Inspectores de zona escolar.</h2></th>"
                 + "  </tr>";
        
         //Abrimos renglón de la tabla principal
         out = out + "<tr>";
-        out = out + "<td>"; 
+        out = out + "<td style=\"border:0;\">"; 
         
         out = out + "<table align=\"center\" width=\"65%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">";                
         out = out + "<tr>";
@@ -970,7 +981,7 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
         
         //Imprimimos gráfica de los grupos de una escuela.
         nombreArchivo = "\"file:temp/inf_inspectores/zonas_municpio_ua.PNG\"";
-        out = out + "<img src=" + nombreArchivo + " width=\"500\" height=\"300\" border=\"0\">";
+        out = out + "<img src=" + nombreArchivo + " width=\"550\" height=\"350\" border=\"0\">";
         out = out + "<br /><br />";
 
         //cerramos renglón de tabla principal                
@@ -1055,7 +1066,15 @@ public class InformeInspectores extends javax.swing.JInternalFrame {
         
         directorio.delete();
     }
-    
+
+    public JEditorPane getPanel_resultados() {
+        return panel_resultados;
+    }
+
+    void mostrar() {
+        this.jDialog1.setVisible(true);
+    }
+        
 }
 
 
